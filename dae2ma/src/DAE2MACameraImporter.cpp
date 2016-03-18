@@ -111,6 +111,15 @@ namespace DAE2MA
         cameraName = DocumentImporter::frameworkNameToMayaName ( cameraName );
         const ExtraDataCallbackHandler& callbackHandler = getDocumentImporter ()->getMayaIdCallbackHandler ();
         String originalMayaId = getOriginalMayaId ( callbackHandler, cameraId, COLLADASaxFWL15::HASH_ELEMENT_CAMERA );
+
+		const ExtraDataCallbackHandler& callbackCamHandler = getDocumentImporter()->getMayacameraCallbackHandler();
+		const ExtraInfo* extraCam = getInfoExtra(callbackCamHandler, cameraId, COLLADASaxFWL15::HASH_ELEMENT_CAMERA);
+		String HorizontalAperture = extraCam->getHorizontalAperture();
+		String VerticalAperture = extraCam->getVerticalAperture();
+
+		
+
+
         if ( !originalMayaId.empty () ) cameraName = originalMayaId;
         cameraName = generateUniqueDagNodeName ( cameraName, mayaTransformNode );
 
@@ -139,6 +148,25 @@ namespace DAE2MA
             MayaDM::addAttr ( file, COLLADA_ID_ATTRIBUTE_NAME, ATTRIBUTE_DATA_TYPE, ATTRIBUTE_TYPE_STRING );
             MayaDM::setAttr ( file, COLLADA_ID_ATTRIBUTE_NAME, ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_STRING, colladaId );
         }
+
+		if (!HorizontalAperture.empty())
+		{
+//			MayaDM::addAttr(file, PARAMETER_MAYA_HAPERTURE_PARAMETER, ATTRIBUTE_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_FLOAT);
+			MayaDM::startSetAttr(file, PARAMETER_MAYA_HAPERTURE_PARAMETER, HorizontalAperture);
+			MayaDM::endSetAttr(file);
+//			MayaDM::setAttr(file, PARAMETER_MAYA_HAPERTURE_PARAMETER, ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_FLOAT, HorizontalAperture);
+		}
+
+		if (!VerticalAperture.empty())
+		{
+//			MayaDM::addAttr(file, PARAMETER_MAYA_VAPERTURE_PARAMETER, ATTRIBUTE_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_FLOAT);
+//			MayaDM::setAttr(file, PARAMETER_MAYA_VAPERTURE_PARAMETER, ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_FLOAT, VerticalAperture);
+
+			MayaDM::startSetAttr(file, PARAMETER_MAYA_VAPERTURE_PARAMETER, VerticalAperture);
+			MayaDM::endSetAttr(file);
+		}
+
+
 //         // TODO Add the attributes for all the extra tags.
 //         setExtraData ( camera->getExtraDataArray () );
 

@@ -139,6 +139,9 @@ namespace DAE2MA
         /** The callback handler to parse the extra data elements. */
         ExtraDataCallbackHandler mMayaIdCallbackHandler;
 
+		/** The callback handler to parse the extra data elements from Camera. */
+		ExtraCameraDataCallbackHandler mMayaCameraCallbackHandler;
+
         /** The URI of the visual scene to use. */
         COLLADAFW::InstanceVisualScene* mInstanceVisualScene;
 
@@ -268,6 +271,8 @@ namespace DAE2MA
 
         /** The callback handler to parse the extra data elements. */
         const ExtraDataCallbackHandler& getMayaIdCallbackHandler () const { return mMayaIdCallbackHandler; }
+		const ExtraDataCallbackHandler& getMayacameraCallbackHandler() const { return mMayaCameraCallbackHandler; }
+		
 
         /** The current maya ascii file to import the data. */
         FILE* getFile () const { return mFile; }

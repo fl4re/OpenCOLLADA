@@ -29,6 +29,7 @@ namespace DAE2MA
     const String BaseImporter::ATTRIBUTE_DATA_TYPE = "dt";
     const String BaseImporter::ATTRIBUTE_ATTRIBUTE_TYPE = "at";
     const String BaseImporter::ATTRIBUTE_TYPE = "type";
+	const String BaseImporter::ATTRIBUTE_TYPE_FLOAT = "float";
     const String BaseImporter::ATTRIBUTE_TYPE_STRING = "string";
     const String BaseImporter::ATTRIBUTE_TYPE_STRING_ARRAY = "stringArray";
     const String BaseImporter::ATTRIBUTE_TYPE_COMPOUND = "compound";
@@ -271,6 +272,17 @@ namespace DAE2MA
         // Return the original maya node id.
         return extraInfo->getOriginalMayaId ();
     }
+
+	const ExtraInfo* BaseImporter::getInfoExtra(
+		const ExtraDataCallbackHandler &extraCallbackHandler,
+		const COLLADAFW::UniqueId& uniqueId,
+		const StringHash& hashElement)
+	{
+		// Check if we are really in the camera element (nothing else should be...).
+		const ExtraInfo* extraInfo = extraCallbackHandler.findExtraInfo(uniqueId, hashElement);
+		
+		return extraInfo;
+	}
 
 //     // -----------------------------------
 //     void BaseImporter::setExtraData ( const COLLADAFW::ExtraDataArray &extraDataArray )

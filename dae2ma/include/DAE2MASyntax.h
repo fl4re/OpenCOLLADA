@@ -30,6 +30,14 @@ namespace DAE2MA
     /** Extra technique parameters. */
     static const String PARAMETER_MAYA_ID                           = "originalMayaNodeId";
 
+	static const String PARAMETER_MAYA_VAPERTURE_PARAMETER			= "vertical_aperture";
+	static const String PARAMETER_MAYA_HAPERTURE_PARAMETER			= "horizontal_aperture";
+	static const String PARAMETER_MAYA_LENS_SQUEEZE_PARAMETER		= "lens_squeeze";
+	static const String PARAMETER_MAYA_FILM_FIT_PARAMETER			= "film_fit";
+	static const String PARAMETER_MAYA_FILM_FIT_OFFSET_PARAMETER	= "film_fit_offset";
+	static const String PARAMETER_MAYA_FILM_OFFSET_X_PARAMETER		= "film_offsetX";
+	static const String PARAMETER_MAYA_FILM_OFFSET_Y_PARAMETER		= "film_offsetY";
+
     /** Empty strings. */
     static const String EMPTY_STRING                                = "";
     static const char* EMPTY_CSTRING                                = "";

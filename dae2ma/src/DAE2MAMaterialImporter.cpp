@@ -86,8 +86,14 @@ namespace DAE2MA
         materialName = DocumentImporter::frameworkNameToMayaName ( materialName );
         const ExtraDataCallbackHandler& callbackHandler = getDocumentImporter ()->getMayaIdCallbackHandler ();
         String originalMayaId = getOriginalMayaId ( callbackHandler, materialId, COLLADASaxFWL15::HASH_ELEMENT_MATERIAL );
-        if ( !originalMayaId.empty () ) materialName = originalMayaId;
+        
+		/*
+		if ( !originalMayaId.empty () ) materialName = originalMayaId;
         materialName = generateUniqueDependNodeName ( materialName );
+		*/
+		bool returnConverted = true;
+		if (COLLADABU::Utils::equals(materialName, originalMayaId)) returnConverted = false;
+		materialName = generateUniqueDependNodeName(materialName, returnConverted);
 
 //         // TODO Doesn't work on file import, just on file open!
 //         // If the name of the material is "lambert1", we want to import a shared node!

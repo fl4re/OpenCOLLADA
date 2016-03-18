@@ -31,6 +31,8 @@ namespace DAE2MA
 
         /** The text value of the current original maya id. */
         String mOriginalMayaId;
+		String mVerticalAperture;
+		String mHorizontalAperture;
 
     public:
 
@@ -56,6 +58,24 @@ namespace DAE2MA
             mOriginalMayaId.assign ( text, textLength ); 
         }
 
+		/** The text value of the current original maya id. */
+		String& getVerticalAperture() { return mVerticalAperture; }
+		const String& getVerticalAperture() const { return mVerticalAperture; }
+		void setVerticalAperture(const String& val) { mVerticalAperture = val; }
+		void setVerticalAperture(const GeneratedSaxParser::ParserChar* text, size_t textLength)
+		{
+			mVerticalAperture.assign(text, textLength);
+		}
+
+		/** The text value of the current original maya id. */
+		String& getHorizontalAperture() { return mHorizontalAperture; }
+		const String& getHorizontalAperture() const { return mHorizontalAperture; }
+		void setHorizontalAperture(const String& val) { mHorizontalAperture = val; }
+		void setHorizontalAperture(const GeneratedSaxParser::ParserChar* text, size_t textLength)
+		{
+			mHorizontalAperture.assign(text, textLength);
+		}
+
     };
 
     /** Implementation of an extra data callback handler with the callback handler interface. */
@@ -65,8 +85,8 @@ namespace DAE2MA
 
         typedef std::map<COLLADAFW::UniqueId, std::vector<ExtraInfo> > ExtraInfosMap;
 
-	private:
-	
+	//private:
+	protected:
         /** True, if the current text field is the original id field. */
         bool mIsOriginalIdField;
 
@@ -108,6 +128,30 @@ namespace DAE2MA
 		const ExtraDataCallbackHandler& operator= ( const ExtraDataCallbackHandler& pre );
 
 	};
+
+	class ExtraCameraDataCallbackHandler : public ExtraDataCallbackHandler
+	{
+
+	public:
+
+		/** Constructor. */
+		ExtraCameraDataCallbackHandler();
+
+		/** Destructor. */
+		virtual ~ExtraCameraDataCallbackHandler();
+
+		/** True, if the current text field is the original id field. */
+		bool mIsVerticalAperture;
+		bool mIsHorizontalAperture;
+
+	public:
+
+		/** The methods to get the extra data tags to the registered callback handlers. */
+		virtual bool elementBegin(const GeneratedSaxParser::ParserChar* elementName, const GeneratedSaxParser::xmlChar** attributes);
+		virtual bool elementEnd(const GeneratedSaxParser::ParserChar* elementName);
+		virtual bool textData(const GeneratedSaxParser::ParserChar* text, size_t textLength);
+	};
+
 
 } // namespace DAE2MA
 

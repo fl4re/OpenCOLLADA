@@ -947,7 +947,16 @@ namespace COLLADAMaya
 
             // Get the stride
             uint stride = 2;
-            String texCoordId = meshId + "-" + uvSetNameStr;
+			String texCoordId;
+
+			String added("-00-");
+			std::size_t found = uvSetNameStr.find(added);
+			if (found != std::string::npos)
+			{
+				uvSetNameStr = uvSetNameStr.substr(found+added.length());
+			}
+			
+			texCoordId = meshId + added + uvSetNameStr;
 
             COLLADASW::FloatSource texCoordSource ( mSW );
             texCoordSource.setId ( texCoordId );

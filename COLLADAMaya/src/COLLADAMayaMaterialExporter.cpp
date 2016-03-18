@@ -264,6 +264,17 @@ namespace COLLADAMaya
 //                 // TODO Export the user defined material extra data from import (extra preservation).
 //                 mDocumentExporter->exportExtraData ( shader, COLLADAFW::ExtraKeys::MATERIAL );
 
+
+				COLLADASW::StreamWriter* streamWriter = mDocumentExporter->getStreamWriter();
+
+				COLLADASW::Extra extraSource(streamWriter);
+				extraSource.openExtra();
+					COLLADASW::Technique techniqueSource(streamWriter);
+						techniqueSource.openTechnique(PROFILE_MAYA);
+						techniqueSource.addParameter(PARAMETER_MAYA_ID, mayaMaterialId, PARAMETER_MAYA_ID, "string");
+					techniqueSource.closeTechnique();
+				extraSource.closeExtra();
+
                 // Closes the current effect tag
                 closeMaterial();
 

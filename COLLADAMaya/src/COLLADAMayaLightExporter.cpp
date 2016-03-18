@@ -185,7 +185,7 @@ namespace COLLADAMaya
         }
 
         // Export the original maya name.
-        light->addExtraTechniqueParameter ( PROFILE_MAYA, PARAMETER_MAYA_ID, mayaLightId );
+		light->addExtraTechniqueParameter(PROFILE_MAYA, PARAMETER_MAYA_ID, lightName);
 
         // Get a pointer to the animation exporter.
         AnimationExporter* anim = mDocumentExporter->getAnimationExporter();

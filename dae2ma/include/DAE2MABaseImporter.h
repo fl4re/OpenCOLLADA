@@ -76,6 +76,7 @@ namespace DAE2MA
         static const String ATTRIBUTE_DATA_TYPE;
         static const String ATTRIBUTE_ATTRIBUTE_TYPE;
         static const String ATTRIBUTE_TYPE;
+		static const String ATTRIBUTE_TYPE_FLOAT;
         static const String ATTRIBUTE_TYPE_STRING;
         static const String ATTRIBUTE_TYPE_STRING_ARRAY;
         static const String ATTRIBUTE_TYPE_COMPOUND;
@@ -268,6 +269,11 @@ namespace DAE2MA
             const ExtraDataCallbackHandler& mayaIdCallbackHandler, 
             const COLLADAFW::UniqueId& uniqueId, 
             const StringHash& hashElement );
+
+		const ExtraInfo* getInfoExtra(
+			const ExtraDataCallbackHandler& mayaIdCallbackHandler,
+			const COLLADAFW::UniqueId& uniqueId,
+			const StringHash& hashElement);
 
 //         /**
 //          * First we have to build a tree. With this tree, we know the number of children of every 

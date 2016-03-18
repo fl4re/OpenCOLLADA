@@ -40,36 +40,39 @@ namespace COLLADASW
     void LibraryAnimationClips::addAnimationClip ( const ColladaAnimationClip& animationClip )
     {
         // Opens the library, if it is not already open.
-        openLibrary();
-        mSW->openElement ( CSWC::CSW_ELEMENT_ANIMATION_CLIP );
+		const AnimationInstances instancedAnimations = animationClip.getInstancedAnimations();
 
-        if ( !animationClip.getAnimationClipId().empty() )
-            mSW->appendAttribute ( CSWC::CSW_ATTRIBUTE_ID, animationClip.getAnimationClipId() );
+		if (instancedAnimations.size() > 0)
+		{
+			openLibrary();
+			mSW->openElement(CSWC::CSW_ELEMENT_ANIMATION_CLIP);
 
-        if (!animationClip.getName().empty())
-            mSW->appendAttribute(CSWC::CSW_ATTRIBUTE_NAME, animationClip.getName());
+			if (!animationClip.getAnimationClipId().empty())
+				mSW->appendAttribute(CSWC::CSW_ATTRIBUTE_ID, animationClip.getAnimationClipId());
 
-        if ( animationClip.getStartTime() != ( -1.0f ) )
-            mSW->appendAttribute ( CSWC::CSW_ATTRIBUTE_START, animationClip.getStartTime() );
+			if (!animationClip.getName().empty())
+				mSW->appendAttribute(CSWC::CSW_ATTRIBUTE_NAME, animationClip.getName());
 
-        if ( animationClip.getEndTime() != ( -1.0f ) )
-            mSW->appendAttribute ( CSWC::CSW_ATTRIBUTE_END, animationClip.getEndTime() );
+			if (animationClip.getStartTime() != (-1.0f))
+				mSW->appendAttribute(CSWC::CSW_ATTRIBUTE_START, animationClip.getStartTime());
 
-        const AnimationInstances instancedAnimations = animationClip.getInstancedAnimations();
+			if (animationClip.getEndTime() != (-1.0f))
+				mSW->appendAttribute(CSWC::CSW_ATTRIBUTE_END, animationClip.getEndTime());
 
-        AnimationInstances::const_iterator instancedAnimationsIter = instancedAnimations.begin();
-        for ( ; instancedAnimationsIter != instancedAnimations.end(); ++instancedAnimationsIter )
-        {
-            String instanceName = *instancedAnimationsIter;
-            mSW->openElement ( CSWC::CSW_ELEMENT_INSTANCE_ANIMATION );
-            mSW->appendAttribute ( CSWC::CSW_ATTRIBUTE_URL, "#" + instanceName );
-            mSW->closeElement();
-        }
-		
-		if (animationClip.isAnimationEvent())
-			animationClip.addExtraTechniques(mSW);
+			AnimationInstances::const_iterator instancedAnimationsIter = instancedAnimations.begin();
+			for (; instancedAnimationsIter != instancedAnimations.end(); ++instancedAnimationsIter)
+			{
+				String instanceName = *instancedAnimationsIter;
+				mSW->openElement(CSWC::CSW_ELEMENT_INSTANCE_ANIMATION);
+				mSW->appendAttribute(CSWC::CSW_ATTRIBUTE_URL, "#" + instanceName);
+				mSW->closeElement();
+			}
 
-        mSW->closeElement();
+			if (animationClip.isAnimationEvent())
+				animationClip.addExtraTechniques(mSW);
+
+			mSW->closeElement();
+		}
     }
 
 

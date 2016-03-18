@@ -98,4 +98,75 @@ namespace DAE2MA
         return true;
     }
 
+
+
+
+
+
+	//------------------------------
+	ExtraCameraDataCallbackHandler::ExtraCameraDataCallbackHandler()
+		: mIsVerticalAperture(false), mIsHorizontalAperture(false)
+	{
+	}
+
+	//------------------------------
+	ExtraCameraDataCallbackHandler::~ExtraCameraDataCallbackHandler()
+	{
+	}
+
+
+	bool ExtraCameraDataCallbackHandler::elementBegin(const GeneratedSaxParser::ParserChar* elementName, const GeneratedSaxParser::xmlChar** attributes)
+	{
+		if (COLLADABU::Utils::equals(PARAMETER_MAYA_VAPERTURE_PARAMETER, String(elementName)))
+		{
+			mIsVerticalAperture = true;
+		}
+		else if (COLLADABU::Utils::equals(PARAMETER_MAYA_HAPERTURE_PARAMETER, String(elementName)))
+		{
+			mIsHorizontalAperture = true;
+		}
+
+		return true;
+	}
+
+	bool ExtraCameraDataCallbackHandler::elementEnd(const GeneratedSaxParser::ParserChar* elementName)
+	{
+
+		std::map<COLLADAFW::UniqueId, std::vector<ExtraInfo> >::iterator it;
+
+		if (mIsVerticalAperture || mIsHorizontalAperture)
+		{
+			it = mExtraInfos.find(mCurrentExtraInfo.getUniqueId());
+			if (it == mExtraInfos.end())
+				mExtraInfos[mCurrentExtraInfo.getUniqueId()].push_back(mCurrentExtraInfo);
+		}
+
+		if (mIsVerticalAperture)
+		{
+			mExtraInfos[mCurrentExtraInfo.getUniqueId()][0].getVerticalAperture() = mCurrentExtraInfo.getVerticalAperture();
+			mIsVerticalAperture = false;
+			mCurrentExtraInfo.setVerticalAperture(EMPTY_STRING);
+		}
+		else if (mIsHorizontalAperture)
+		{
+			mExtraInfos[mCurrentExtraInfo.getUniqueId()][0].getHorizontalAperture() = mCurrentExtraInfo.getHorizontalAperture();
+			mIsHorizontalAperture = false;
+			mCurrentExtraInfo.setHorizontalAperture(EMPTY_STRING);
+		}
+
+		return true;
+	}
+
+	bool ExtraCameraDataCallbackHandler::textData(const GeneratedSaxParser::ParserChar* text, size_t textLength)
+	{
+
+		if (mIsVerticalAperture)
+			mCurrentExtraInfo.setVerticalAperture(text, textLength);
+		else if (mIsHorizontalAperture)
+			mCurrentExtraInfo.setHorizontalAperture(text, textLength);
+
+		return true;
+	}
+	
+
 } // namespace DAE2MA
