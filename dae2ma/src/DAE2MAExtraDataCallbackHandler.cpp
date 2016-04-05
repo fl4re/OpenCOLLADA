@@ -105,7 +105,7 @@ namespace DAE2MA
 
 	//------------------------------
 	ExtraCameraDataCallbackHandler::ExtraCameraDataCallbackHandler()
-		: mIsVerticalAperture(false), mIsHorizontalAperture(false)
+		: mIsVerticalAperture(false), mIsHorizontalAperture(false), mIsFocalLength(false)
 	{
 	}
 
@@ -125,6 +125,26 @@ namespace DAE2MA
 		{
 			mIsHorizontalAperture = true;
 		}
+		else if (COLLADABU::Utils::equals(PARAMETER_MAYA_FOCAL_LENGTH_PARAMETER, String(elementName)))
+		{
+			mIsFocalLength = true;
+		}
+		else if (COLLADABU::Utils::equals(PARAMETER_MAYA_FILM_FIT_PARAMETER, String(elementName)))
+		{
+			mFilmFit = true;
+		}
+		else if (COLLADABU::Utils::equals(PARAMETER_MAYA_FILM_FIT_OFFSET_PARAMETER, String(elementName)))
+		{
+			mFilmFitOffset = true;
+		}
+		else if (COLLADABU::Utils::equals(PARAMETER_MAYA_FILM_OFFSET_X_PARAMETER, String(elementName)))
+		{
+			mFilmOffsetX = true;
+		}
+		else if (COLLADABU::Utils::equals(PARAMETER_MAYA_FILM_OFFSET_Y_PARAMETER, String(elementName)))
+		{
+			mFilmOffsetY = true;
+		}
 
 		return true;
 	}
@@ -134,7 +154,7 @@ namespace DAE2MA
 
 		std::map<COLLADAFW::UniqueId, std::vector<ExtraInfo> >::iterator it;
 
-		if (mIsVerticalAperture || mIsHorizontalAperture)
+		if (mIsVerticalAperture || mIsHorizontalAperture || mIsFocalLength || mFilmFit || mFilmFitOffset || mFilmOffsetX || mFilmOffsetY)
 		{
 			it = mExtraInfos.find(mCurrentExtraInfo.getUniqueId());
 			if (it == mExtraInfos.end())
@@ -153,6 +173,36 @@ namespace DAE2MA
 			mIsHorizontalAperture = false;
 			mCurrentExtraInfo.setHorizontalAperture(EMPTY_STRING);
 		}
+		else if (mIsFocalLength)
+		{
+			mExtraInfos[mCurrentExtraInfo.getUniqueId()][0].getFocalLength() = mCurrentExtraInfo.getFocalLength();
+			mIsFocalLength = false;
+			mCurrentExtraInfo.setFocalLength(EMPTY_STRING);
+		}
+		else if (mFilmFit)
+		{
+			mExtraInfos[mCurrentExtraInfo.getUniqueId()][0].getFilmFit() = mCurrentExtraInfo.getFilmFit();
+			mFilmFit = false;
+			mCurrentExtraInfo.setFilmFit(EMPTY_STRING);
+		}
+		else if (mFilmFitOffset)
+		{
+			mExtraInfos[mCurrentExtraInfo.getUniqueId()][0].getFilmFitOffset() = mCurrentExtraInfo.getFilmFitOffset();
+			mFilmFitOffset = false;
+			mCurrentExtraInfo.setFilmFitOffset(EMPTY_STRING);
+		}
+		else if (mFilmOffsetX)
+		{
+			mExtraInfos[mCurrentExtraInfo.getUniqueId()][0].getFilmOffsetX() = mCurrentExtraInfo.getFilmOffsetX();
+			mFilmOffsetX = false;
+			mCurrentExtraInfo.setFilmOffsetX(EMPTY_STRING);
+		}
+		else if (mFilmOffsetY)
+		{
+			mExtraInfos[mCurrentExtraInfo.getUniqueId()][0].getFilmOffsetY() = mCurrentExtraInfo.getFilmOffsetY();
+			mFilmOffsetY = false;
+			mCurrentExtraInfo.setFilmOffsetY(EMPTY_STRING);
+		}
 
 		return true;
 	}
@@ -164,6 +214,16 @@ namespace DAE2MA
 			mCurrentExtraInfo.setVerticalAperture(text, textLength);
 		else if (mIsHorizontalAperture)
 			mCurrentExtraInfo.setHorizontalAperture(text, textLength);
+		else if (mIsFocalLength)
+			mCurrentExtraInfo.setFocalLength(text, textLength);
+		else if (mFilmFit)
+			mCurrentExtraInfo.setFilmFit(text, textLength);
+		else if (mFilmFitOffset)
+			mCurrentExtraInfo.setFilmFitOffset(text, textLength);
+		else if (mFilmOffsetX)
+			mCurrentExtraInfo.setFilmOffsetX(text, textLength);
+		else if (mFilmOffsetY)
+			mCurrentExtraInfo.setFilmOffsetY(text, textLength);
 
 		return true;
 	}

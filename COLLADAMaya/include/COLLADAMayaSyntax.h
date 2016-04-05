@@ -198,6 +198,7 @@ namespace COLLADAMaya
     static const String MAYA_FILM_FIT_OFFSET_PARAMETER              = "film_fit_offset";
     static const String MAYA_FILM_OFFSET_X_PARAMETER                = "film_offsetX";
     static const String MAYA_FILM_OFFSET_Y_PARAMETER                = "film_offsetY";
+	static const String MAYA_FOCAL_LENGTH_PARAMETER					= "focal_length";
 
     /** The plug ids for the animation exports. */
     static const char* ATTR_ALPHA_GAIN                              = "alphaGain";

@@ -255,6 +255,10 @@ namespace COLLADAMaya
         paramSid = EMPTY_STRING; if ( animated ) paramSid = HORIZONTAL_APERTURE_SID;
         camera.addExtraTechniqueParameter( PROFILE_MAYA, MAYA_HAPERTURE_PARAMETER, hAperture, paramSid );
  
+		double focalLength = cameraFn.focalLength(&status); CHECK_STAT(status);
+		paramSid = EMPTY_STRING;
+		camera.addExtraTechniqueParameter(PROFILE_MAYA, MAYA_FOCAL_LENGTH_PARAMETER, focalLength, paramSid);
+
         double lensSqueeze = cameraFn.lensSqueezeRatio ( &status ); CHECK_STAT(status);
         animated = anim->addNodeAnimation( cameraFn.object(), LENS_SQUEEZE_SID, ATTR_LENS_SQUEEZE_RATIO, kSingle );
         paramSid = EMPTY_STRING; if ( animated ) paramSid = LENS_SQUEEZE_SID;

@@ -30,6 +30,17 @@ namespace DAE2MA
     /** Extra technique parameters. */
     static const String PARAMETER_MAYA_ID                           = "originalMayaNodeId";
 
+	
+	static const String PARAMETER_MAYA_V_FILM_APERTURE_ATTR			= "verticalFilmAperture";
+	static const String PARAMETER_MAYA_H_FILM_APERTURE_ATTR			= "horizontalFilmAperture";
+	static const String PARAMETER_MAYA_LENS_SQUEEZE_ATTR			= "lens_squeeze";
+	static const String PARAMETER_MAYA_FILM_FIT_ATTR				= "filmFit";
+	static const String PARAMETER_MAYA_FILM_FIT_OFFSET_ATTR			= "filmFitOffset";
+	static const String PARAMETER_MAYA_FILM_OFFSET_X_ATTR			= "horizontalFilmOffset";
+	static const String PARAMETER_MAYA_FILM_OFFSET_Y_ATTR			= "verticalFilmOffset";
+	static const String PARAMETER_MAYA_FOCAL_LENGTH_ATTR			= "focalLength";
+
+
 	static const String PARAMETER_MAYA_VAPERTURE_PARAMETER			= "vertical_aperture";
 	static const String PARAMETER_MAYA_HAPERTURE_PARAMETER			= "horizontal_aperture";
 	static const String PARAMETER_MAYA_LENS_SQUEEZE_PARAMETER		= "lens_squeeze";
@@ -37,6 +48,7 @@ namespace DAE2MA
 	static const String PARAMETER_MAYA_FILM_FIT_OFFSET_PARAMETER	= "film_fit_offset";
 	static const String PARAMETER_MAYA_FILM_OFFSET_X_PARAMETER		= "film_offsetX";
 	static const String PARAMETER_MAYA_FILM_OFFSET_Y_PARAMETER		= "film_offsetY";
+	static const String PARAMETER_MAYA_FOCAL_LENGTH_PARAMETER		= "focal_length";
 
     /** Empty strings. */
     static const String EMPTY_STRING                                = "";

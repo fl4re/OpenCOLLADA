@@ -116,6 +116,11 @@ namespace DAE2MA
 		const ExtraInfo* extraCam = getInfoExtra(callbackCamHandler, cameraId, COLLADASaxFWL15::HASH_ELEMENT_CAMERA);
 		String HorizontalAperture = extraCam->getHorizontalAperture();
 		String VerticalAperture = extraCam->getVerticalAperture();
+		String FocalLength = extraCam->getFocalLength();
+		String FilmFit = extraCam->getFilmFit();
+		String FilmFitOffset = extraCam->getFilmFitOffset();
+		String FilmOffsetX = extraCam->getFilmOffsetX();
+		String FilmOffsetY = extraCam->getFilmOffsetY();
 
 		
 
@@ -136,7 +141,7 @@ namespace DAE2MA
         {
             isSharedCamera = true;
         }
-
+		
         // Create the maya camera object and write it into the maya ascii file.
         FILE* file = getDocumentImporter ()->getFile ();
         MayaDM::Camera mayaCamera ( file, cameraName, mayaTransformNode->getNodePath (), isSharedCamera );
@@ -148,23 +153,8 @@ namespace DAE2MA
             MayaDM::addAttr ( file, COLLADA_ID_ATTRIBUTE_NAME, ATTRIBUTE_DATA_TYPE, ATTRIBUTE_TYPE_STRING );
             MayaDM::setAttr ( file, COLLADA_ID_ATTRIBUTE_NAME, ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_STRING, colladaId );
         }
-
-		if (!HorizontalAperture.empty())
-		{
-//			MayaDM::addAttr(file, PARAMETER_MAYA_HAPERTURE_PARAMETER, ATTRIBUTE_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_FLOAT);
-			MayaDM::startSetAttr(file, PARAMETER_MAYA_HAPERTURE_PARAMETER, HorizontalAperture);
-			MayaDM::endSetAttr(file);
-//			MayaDM::setAttr(file, PARAMETER_MAYA_HAPERTURE_PARAMETER, ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_FLOAT, HorizontalAperture);
-		}
-
-		if (!VerticalAperture.empty())
-		{
-//			MayaDM::addAttr(file, PARAMETER_MAYA_VAPERTURE_PARAMETER, ATTRIBUTE_ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_FLOAT);
-//			MayaDM::setAttr(file, PARAMETER_MAYA_VAPERTURE_PARAMETER, ATTRIBUTE_TYPE, ATTRIBUTE_TYPE_FLOAT, VerticalAperture);
-
-			MayaDM::startSetAttr(file, PARAMETER_MAYA_VAPERTURE_PARAMETER, VerticalAperture);
-			MayaDM::endSetAttr(file);
-		}
+		
+		
 
 
 //         // TODO Add the attributes for all the extra tags.
@@ -193,6 +183,50 @@ namespace DAE2MA
             std::cerr << "Unknown camera type!" << std::endl;
             break;
         }
+
+
+		if (!HorizontalAperture.empty())
+		{
+			float val = std::stof(HorizontalAperture) / (float)2.54f;
+			std::stringstream s;
+			s << val;
+			fprintf(file, "setAttr %s.%s %s;\n", cameraName.c_str(), PARAMETER_MAYA_H_FILM_APERTURE_ATTR.c_str(), s.str().c_str());
+		}
+			
+
+		if (!VerticalAperture.empty())
+		{
+			float val = std::stof(VerticalAperture) / (float)2.54f;
+			std::stringstream s;
+			s << val;
+			fprintf(file, "setAttr %s.%s %s;\n", cameraName.c_str(), PARAMETER_MAYA_V_FILM_APERTURE_ATTR.c_str(), s.str().c_str());
+		}
+			
+		if (!FocalLength.empty())
+		{
+			fprintf(file, "setAttr %s.%s %s;\n", cameraName.c_str(), PARAMETER_MAYA_FOCAL_LENGTH_ATTR.c_str(), FocalLength.c_str());
+		}
+
+		if (!FilmFit.empty())
+		{
+			fprintf(file, "setAttr %s.%s %s;\n", cameraName.c_str(), PARAMETER_MAYA_FILM_FIT_ATTR.c_str(), FilmFit.c_str());
+		}
+
+		if (!FilmFitOffset.empty())
+		{
+			fprintf(file, "setAttr %s.%s %s;\n", cameraName.c_str(), PARAMETER_MAYA_FILM_FIT_OFFSET_ATTR.c_str(), FilmFitOffset.c_str());
+		}
+
+		if (!FilmOffsetX.empty())
+		{
+			fprintf(file, "setAttr %s.%s %s;\n", cameraName.c_str(), PARAMETER_MAYA_FILM_OFFSET_X_ATTR.c_str(), FilmOffsetX.c_str());
+		}
+
+		if (!FilmOffsetY.empty())
+		{
+			fprintf(file, "setAttr %s.%s %s;\n", cameraName.c_str(), PARAMETER_MAYA_FILM_OFFSET_Y_ATTR.c_str(), FilmOffsetY.c_str());
+		}
+			
 
     }
 

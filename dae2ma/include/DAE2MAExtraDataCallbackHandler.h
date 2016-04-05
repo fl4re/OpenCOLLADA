@@ -33,6 +33,11 @@ namespace DAE2MA
         String mOriginalMayaId;
 		String mVerticalAperture;
 		String mHorizontalAperture;
+		String mFocalLength;
+		String mFilmFit;
+		String mFilmFitOffset;
+		String mFilmOffsetX;
+		String mFilmOffsetY;
 
     public:
 
@@ -74,6 +79,51 @@ namespace DAE2MA
 		void setHorizontalAperture(const GeneratedSaxParser::ParserChar* text, size_t textLength)
 		{
 			mHorizontalAperture.assign(text, textLength);
+		}
+
+		/** The text value of the current original maya id. */
+		String& getFocalLength() { return mFocalLength; }
+		const String& getFocalLength() const { return mFocalLength; }
+		void setFocalLength(const String& val) { mFocalLength = val; }
+		void setFocalLength(const GeneratedSaxParser::ParserChar* text, size_t textLength)
+		{
+			mFocalLength.assign(text, textLength);
+		}
+
+		/** The text value of the current original maya id. */
+		String& getFilmFit() { return mFilmFit; }
+		const String& getFilmFit() const { return mFilmFit; }
+		void setFilmFit(const String& val) { mFilmFit = val; }
+		void setFilmFit(const GeneratedSaxParser::ParserChar* text, size_t textLength)
+		{
+			mFilmFit.assign(text, textLength);
+		}
+
+		/** The text value of the current original maya id. */
+		String& getFilmFitOffset() { return mFilmFitOffset; }
+		const String& getFilmFitOffset() const { return mFilmFitOffset; }
+		void setFilmFitOffset(const String& val) { mFilmFitOffset = val; }
+		void setFilmFitOffset(const GeneratedSaxParser::ParserChar* text, size_t textLength)
+		{
+			mFilmFitOffset.assign(text, textLength);
+		}
+
+		/** The text value of the current original maya id. */
+		String& getFilmOffsetX() { return mFilmOffsetX; }
+		const String& getFilmOffsetX() const { return mFilmOffsetX; }
+		void setFilmOffsetX(const String& val) { mFilmOffsetX = val; }
+		void setFilmOffsetX(const GeneratedSaxParser::ParserChar* text, size_t textLength)
+		{
+			mFilmOffsetX.assign(text, textLength);
+		}
+
+		/** The text value of the current original maya id. */
+		String& getFilmOffsetY() { return mFilmOffsetY; }
+		const String& getFilmOffsetY() const { return mFilmOffsetY; }
+		void setFilmOffsetY(const String& val) { mFilmOffsetY = val; }
+		void setFilmOffsetY(const GeneratedSaxParser::ParserChar* text, size_t textLength)
+		{
+			mFilmOffsetY.assign(text, textLength);
 		}
 
     };
@@ -143,6 +193,11 @@ namespace DAE2MA
 		/** True, if the current text field is the original id field. */
 		bool mIsVerticalAperture;
 		bool mIsHorizontalAperture;
+		bool mIsFocalLength;
+		int mFilmFit;
+		float mFilmFitOffset;
+		float mFilmOffsetX;
+		float mFilmOffsetY;
 
 	public:
 
