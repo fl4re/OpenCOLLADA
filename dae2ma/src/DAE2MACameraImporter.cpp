@@ -114,14 +114,17 @@ namespace DAE2MA
 
 		const ExtraDataCallbackHandler& callbackCamHandler = getDocumentImporter()->getMayacameraCallbackHandler();
 		const ExtraInfo* extraCam = getInfoExtra(callbackCamHandler, cameraId, COLLADASaxFWL15::HASH_ELEMENT_CAMERA);
-		String HorizontalAperture = extraCam->getHorizontalAperture();
-		String VerticalAperture = extraCam->getVerticalAperture();
-		String FocalLength = extraCam->getFocalLength();
-		String FilmFit = extraCam->getFilmFit();
-		String FilmFitOffset = extraCam->getFilmFitOffset();
-		String FilmOffsetX = extraCam->getFilmOffsetX();
-		String FilmOffsetY = extraCam->getFilmOffsetY();
-
+		
+		if (extraCam)
+		{
+			HorizontalAperture = extraCam->getHorizontalAperture();
+			VerticalAperture = extraCam->getVerticalAperture();
+			FocalLength = extraCam->getFocalLength();
+			FilmFit = extraCam->getFilmFit();
+			FilmFitOffset = extraCam->getFilmFitOffset();
+			FilmOffsetX = extraCam->getFilmOffsetX();
+			FilmOffsetY = extraCam->getFilmOffsetY();
+		}
 		
 
 

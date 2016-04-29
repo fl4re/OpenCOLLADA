@@ -33,6 +33,14 @@ namespace DAE2MA
         /** The standard name for camera without name. */
         static const String CAMERA_NAME;
 
+		String HorizontalAperture;
+		String VerticalAperture;
+		String FocalLength;
+		String FilmFit;
+		String FilmFitOffset;
+		String FilmOffsetX;
+		String FilmOffsetY;
+
     private:
 
         /** 
