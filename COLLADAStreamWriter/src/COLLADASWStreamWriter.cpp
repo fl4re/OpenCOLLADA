@@ -947,7 +947,7 @@ namespace COLLADASW
 	}
 
     //---------------------------------------------------------------
-    TagCloser StreamWriter::openElement ( const String & name, const String & prefix )
+    TagCloser StreamWriter::openElement ( const String & name )
     {
         prepareToAddContents();
         appendNewLine();
@@ -955,16 +955,8 @@ namespace COLLADASW
         mLevel++;
         appendChar ( '<' );
 		ElementIndexType nextElementIndex = mNextElementIndex++;
-		if (prefix.empty())
-		{
-			appendNCNameString(name);
-			mOpenTags.push_back(OpenTag(&name, nextElementIndex));
-		}
-		else
-		{
-			appendNCNameString(prefix + ":" + name);
-			mOpenTags.push_back(OpenTag(&name, &prefix, nextElementIndex));
-		}
+		appendNCNameString(name);
+		mOpenTags.push_back(OpenTag(&name, nextElementIndex));
 
         return TagCloser ( this, nextElementIndex );
     }
@@ -988,14 +980,7 @@ namespace COLLADASW
             appendChar ( '<' );
 
             appendChar ( '/' );
-			if (mOpenTags.back().mPrefix == NULL)
-			{
-				appendNCNameString(*mOpenTags.back().mName);
-			}
-			else
-			{
-				appendNCNameString(*mOpenTags.back().mPrefix + ":" + *mOpenTags.back().mName);
-			}
+			appendNCNameString(*mOpenTags.back().mName);
             appendChar ( '>' );
         }
 
