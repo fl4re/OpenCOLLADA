@@ -11,6 +11,9 @@ using namespace std;
 const char* checkSchemaAuto = "--check-schema-auto";
 const char* checkSchema = "--check-schema";
 const char* checkUniqueIds = "--check-unique-ids";
+const char* checkReferencedJointController = "--check-joint-controller";
+const char* checkSkeletonRoots = "--check-skeleton-roots";
+const char* checkReferencedJointsBySkinController = "--check-referenced-joints-by-skin-controller";
 
 int main(int argc, char* argv[])
 {
@@ -20,6 +23,10 @@ int main(int argc, char* argv[])
 	argparse.addArgument(checkSchemaAuto);
 	argparse.addArgument(checkSchema).numParameters(1);
 	argparse.addArgument(checkUniqueIds);
+	argparse.addArgument(checkReferencedJointController);
+	argparse.addArgument(checkSkeletonRoots);
+	argparse.addArgument(checkReferencedJointsBySkinController);
+
 	if (!argparse.parseArguments())
 		return 1;
 
@@ -52,6 +59,21 @@ int main(int argc, char* argv[])
 		if (argparse.findArgument(checkUniqueIds))
 		{
 			result |= validator.checkUniqueIds();
+		}
+
+		if (argparse.findArgument(checkReferencedJointController))
+		{
+			result |= validator.checkReferencedJointController();
+		}
+
+		if (argparse.findArgument(checkSkeletonRoots))
+		{
+			result |= validator.checkSkeletonRoots();
+		}
+
+		if (argparse.findArgument(checkReferencedJointsBySkinController))
+		{
+			result |= validator.checkReferencedJointsBySkinController();
 		}
 
 		if (const auto & arg = argparse.findArgument(checkSchema))

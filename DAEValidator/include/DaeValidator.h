@@ -14,6 +14,9 @@ namespace opencollada
 		int checkAll() const;
 		int checkSchema(const std::string & schema_uri = std::string()) const;
 		int checkUniqueIds() const;
+		int checkReferencedJointController() const;
+		int checkSkeletonRoots() const;
+		int checkReferencedJointsBySkinController() const ;
 
 	private:
 		int validateAgainstMemory(const char* xsd, size_t size) const;

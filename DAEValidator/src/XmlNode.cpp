@@ -33,6 +33,21 @@ namespace opencollada
 		return XmlNode();
 	}
 
+	/*XmlNode XmlNode::parent() const
+	{
+		mNode->parent
+		for (xmlNodePtr node = mNode->children; node; node = node->next)
+		{
+			if (node->type == XML_ELEMENT_NODE &&
+				name == node->name)
+			{
+				return XmlNode(node);
+			}
+		}
+		return XmlNode();
+	}
+	*/
+
 	string XmlNode::text() const
 	{
 		for (xmlNodePtr node = mNode->children; node; node = node->next)

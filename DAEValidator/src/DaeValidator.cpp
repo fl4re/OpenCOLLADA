@@ -198,6 +198,162 @@ namespace opencollada
 		return result;
 	}
 
+
+	int DaeValidator::checkReferencedJointsBySkinController() const
+	{
+		XmlNodeSet instanceControllers = mDae.root().selectNodes("//collada:instance_controller");
+		XmlNodeSet controllers = mDae.root().selectNodes("//collada:controller");
+		
+		string controllerUrl;
+
+
+		bool found = false;
+
+		for (const auto& instanceController : instanceControllers)
+		{
+			controllerUrl = instanceController.attribute("url").value();
+			size_t pos = controllerUrl.find_last_of('#');
+
+			for (const auto& controller : controllers)
+			{
+				if (controller.attribute("id").value().compare(controllerUrl.substr(pos + 1)) == 0)
+				{
+					XmlNodeSet sourceSkinNodes = controller.selectNodes("//collada:Name_array");
+
+					for (const auto& sourceSkinNode : sourceSkinNodes)
+					{
+
+						string skin = sourceSkinNode.text();
+						std::vector<String> skinNodes;
+
+						Utils::split(skin, " ", skinNodes);
+						string visualNodeName;
+						string skinNodeName;
+
+						found = false;
+
+						for (const auto& node : skinNodes)
+						{
+							string research = "//collada:node[@name=" + string("'") + node + "'" + "]";
+
+							XmlNodeSet skeletons = instanceController.selectNodes("//collada:skeleton");
+							for (const auto& skeleton : skeletons)
+							{
+								string skeletonName = skeleton.text();
+								size_t pos = skeletonName.find_last_of('#');
+
+								skeletonName = skeletonName.substr(pos + 1);
+								string research2 = "//collada:node[@id=" + string("'") + skeletonName + "'" + "]";
+								XmlNodeSet rootNodes = mDae.root().selectNodes(research2);
+
+								for (const auto& rootNode : rootNodes)
+								{
+									string rootNodeName = rootNode.attribute("id").value();
+									XmlNodeSet resultnodes = rootNode.selectNodes(research);
+
+									for (const auto& resultnode : resultnodes)
+									{
+										string name = resultnode.attribute("name").value();
+										if (resultnodes.size())
+											found = true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return 0;
+	}
+
+	int DaeValidator::checkSkeletonRoots() const
+	{
+		
+		XmlNodeSet skeletonNodes = mDae.root().selectNodes("//collada:skeleton");
+		XmlNodeSet visualSceneNodes = mDae.root().selectNodes("//collada:node[@type='JOINT']");
+
+
+		for (const auto& skeletonNode : skeletonNodes)
+		{
+			string visualNodeId;
+			string skeletonNodeName = skeletonNode.text();
+			
+			bool found = false;
+			
+			for (const auto& visualNode : visualSceneNodes)
+			{
+				visualNodeId = visualNode.attribute("id").value();
+
+				size_t pos = skeletonNodeName.find_last_of('#');
+
+				if (pos != String::npos)
+				if (skeletonNodeName.substr(pos+1).compare(visualNodeId) == 0)
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				cout << "Error" << skeletonNodeName << "not referenced in visual scene" << endl;
+				return 2;
+			}
+
+		}
+
+		return 0;
+
+	}
+
+
+
+	int DaeValidator::checkReferencedJointController() const
+	{
+
+		XmlNodeSet sourceSkinNodes = mDae.root().selectNodes("//collada:library_controllers/collada:controller/collada:skin/collada:source/collada:Name_array");
+		XmlNodeSet visualSceneNodes = mDae.root().selectNodes("//collada:node[@type='JOINT']");
+
+
+		for (const auto& sourceSkinNode : sourceSkinNodes)
+		{
+			string skin = sourceSkinNode.text();
+			std::vector<String> skinNodes;
+
+			Utils::split(skin, " ", skinNodes);
+			string visualNodeName;
+			string skinNodeName;
+
+			for (const auto& skinNode : skinNodes)
+			{
+				bool found = false;
+
+				skinNodeName = skinNode;
+				
+				for (const auto& visualNode : visualSceneNodes)
+				{
+					visualNodeName = visualNode.attribute("name").value();
+
+					if (skinNode.compare(visualNodeName) == 0)
+					{
+						found = true;
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					cout << "Error" << skinNodeName << "not referenced in visual scene" << endl;
+					return 2;
+				}	
+			}
+		}
+
+		return 0;
+	}
+
 	int DaeValidator::validateAgainstFile(const string & xsdPath) const
 	{
 		// Open xsd
