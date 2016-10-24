@@ -12,8 +12,11 @@ const char* checkSchemaAuto = "--check-schema-auto";
 const char* checkSchema = "--check-schema";
 const char* checkUniqueIds = "--check-unique-ids";
 const char* checkReferencedJointController = "--check-joint-controller";
+const char* checkCompleteBindPose = "--check-complete-bindpose";
 const char* checkSkeletonRoots = "--check-skeleton-roots";
 const char* checkReferencedJointsBySkinController = "--check-referenced-joints-by-skin-controller";
+const char* checkisSkeletonRootExistToResolveController = "--check-is-skeleton-root-exist-to-resolve-controller";
+
 
 int main(int argc, char* argv[])
 {
@@ -24,8 +27,10 @@ int main(int argc, char* argv[])
 	argparse.addArgument(checkSchema).numParameters(1);
 	argparse.addArgument(checkUniqueIds);
 	argparse.addArgument(checkReferencedJointController);
+	argparse.addArgument(checkCompleteBindPose);
 	argparse.addArgument(checkSkeletonRoots);
 	argparse.addArgument(checkReferencedJointsBySkinController);
+	argparse.addArgument(checkisSkeletonRootExistToResolveController);
 
 	if (!argparse.parseArguments())
 		return 1;
@@ -74,6 +79,16 @@ int main(int argc, char* argv[])
 		if (argparse.findArgument(checkReferencedJointsBySkinController))
 		{
 			result |= validator.checkReferencedJointsBySkinController();
+		}
+
+		if (argparse.findArgument(checkCompleteBindPose))
+		{
+			result |= validator.checkCompleteBindPose();
+		}
+
+		if (argparse.findArgument(checkisSkeletonRootExistToResolveController))
+		{
+			result |= validator.checkisSkeletonRootExistToResolveController();
 		}
 
 		if (const auto & arg = argparse.findArgument(checkSchema))
