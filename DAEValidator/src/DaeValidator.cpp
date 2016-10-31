@@ -538,6 +538,23 @@ namespace opencollada
 		return result;
 	}
 
+
+	int DaeValidator::checkSkinController() const
+	{
+		bool result = true;
+
+		result *= !checkReferencedJointController();
+		result *= !checkSkeletonRoots();
+		result *= !checkReferencedJointsBySkinController();
+		result *= !checkisSkeletonRootExistToResolveController();
+		result *= !checkCompleteBindPose();
+
+		if (result)
+			return 0;
+		else
+			return 2;
+	}
+
 	int DaeValidator::ValidateAgainstFile(const Dae & dae, const string & xsdPath)
 	{
 		// Open xsd
