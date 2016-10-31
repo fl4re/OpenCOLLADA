@@ -15,8 +15,10 @@ namespace opencollada
 		Argument& numParameters(size_t n);
 		Argument& required();
 		Argument& action(const std::function<void(const std::string & param)> & toDo);
+		Argument& flags(size_t flags);
 
 		size_t getNumParameters() const;
+		size_t getFlags() const;
 		bool isSet() const;
 		bool isRequired() const;
 
@@ -40,6 +42,7 @@ namespace opencollada
 		static Argument null;
 		std::vector<std::string> mValues;
 		std::function<void(const std::string & param)> mToDo;
+		size_t mFlags = 0;
 		bool mSet = false;
 		bool mRequired = false;
 	};
@@ -61,6 +64,7 @@ namespace opencollada
 		const Argument& findArgument(const std::string & name);
 		const Argument& findArgument(size_t index);
 		size_t numSetArguments() const;
+		bool hasSetArgument(size_t flags) const;
 
 	private:
 		std::map<std::string, Argument> mArguments;

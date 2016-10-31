@@ -24,6 +24,8 @@ namespace opencollada
 	const char* recursive = "--recursive";
 	const char* quiet = "--quiet";
 
+	const size_t flag_checkOption = 0x01;
+
 	const char* colladaNamespace141 = "http://www.collada.org/2005/11/COLLADASchema";
 	const char* colladaSchemaFileName141 = "collada_schema_1_4_1.xsd";
 	XmlSchema colladaSchema141;
@@ -38,14 +40,14 @@ int main(int argc, char* argv[])
 	// Parse arguments
 	ArgumentParser argparse(argc, argv);
 	argparse.addArgument(); // dae or directory
-	argparse.addArgument(checkSchemaAuto);
-	argparse.addArgument(checkSchema).numParameters(1);
-	argparse.addArgument(checkUniqueIds);
-	argparse.addArgument(checkReferencedJointController);
-	argparse.addArgument(checkCompleteBindPose);
-	argparse.addArgument(checkSkeletonRoots);
-	argparse.addArgument(checkReferencedJointsBySkinController);
-	argparse.addArgument(checkisSkeletonRootExistToResolveController);
+	argparse.addArgument(checkSchemaAuto).flags(flag_checkOption);
+	argparse.addArgument(checkSchema).numParameters(1).flags(flag_checkOption);
+	argparse.addArgument(checkUniqueIds).flags(flag_checkOption);
+	argparse.addArgument(checkReferencedJointController).flags(flag_checkOption);
+	argparse.addArgument(checkCompleteBindPose).flags(flag_checkOption);
+	argparse.addArgument(checkSkeletonRoots).flags(flag_checkOption);
+	argparse.addArgument(checkReferencedJointsBySkinController).flags(flag_checkOption);
+	argparse.addArgument(checkisSkeletonRootExistToResolveController).flags(flag_checkOption);
 	argparse.addArgument(recursive);
 	argparse.addArgument(quiet);
 
@@ -92,14 +94,7 @@ int main(int argc, char* argv[])
 	DaeValidator validator(daePaths);
 	int result = 0;
 
-	if (!argparse.findArgument(checkSchemaAuto) &&
-		!argparse.findArgument(checkUniqueIds) &&
-		!argparse.findArgument(checkSchema) &&
-		!argparse.findArgument(checkReferencedJointController) &&
-		!argparse.findArgument(checkCompleteBindPose) &&
-		!argparse.findArgument(checkSkeletonRoots) &&
-		!argparse.findArgument(checkReferencedJointsBySkinController) &&
-		!argparse.findArgument(checkisSkeletonRootExistToResolveController))
+	if (!argparse.hasSetArgument(flag_checkOption))
 	{
 		result |= validator.checkAll();
 	}

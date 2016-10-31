@@ -31,12 +31,16 @@ namespace opencollada
 
 		/** Check if we have a complete bind pose. */
 		int checkCompleteBindPose() const;
-		
 
 	private:
 		static int CheckAll(const Dae & dae);
 		static int CheckSchema(const Dae & dae);
 		static int CheckUniqueIds(const Dae & dae);
+		static int CheckReferencedJointController(const Dae & dae);
+		static int CheckSkeletonRoots(const Dae & dae);
+		static int CheckReferencedJointsBySkinController(const Dae & dae);
+		static int CheckisSkeletonRootExistToResolveController(const Dae & dae);
+		static int CheckCompleteBindPose(const Dae & dae);
 
 		int for_each_dae(const std::function<int(const Dae &)> & task) const;
 		static int ValidateAgainstFile(const Dae & dae, const std::string & xsdPath);

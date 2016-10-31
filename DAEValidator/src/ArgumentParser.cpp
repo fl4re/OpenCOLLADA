@@ -105,9 +105,20 @@ namespace opencollada
 		return *this;
 	}
 
+	Argument& Argument::flags(size_t flags)
+	{
+		mFlags = flags;
+		return *this;
+	}
+
 	size_t Argument::getNumParameters() const
 	{
 		return mValues.size();
+	}
+
+	size_t Argument::getFlags() const
+	{
+		return mFlags;
 	}
 
 	bool Argument::isSet() const
@@ -255,5 +266,18 @@ namespace opencollada
 			if (arg.isSet())
 				++num;
 		return num;
+	}
+
+	bool ArgumentParser::hasSetArgument(size_t flags) const
+	{
+		for (const auto & pair : mArguments)
+			if (pair.second.isSet() && pair.second.getFlags() & flags)
+				return true;
+
+		for (const auto & arg : mNoSwitchArguments)
+			if (arg.isSet() && arg.getFlags() & flags)
+				return true;
+
+		return false;
 	}
 }
