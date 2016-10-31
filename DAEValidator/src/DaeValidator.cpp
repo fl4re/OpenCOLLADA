@@ -1,5 +1,7 @@
 #include "DaeValidator.h"
 #include "COLLADASWConstants.h"
+#include "PathUtil.h"
+#include "StringUtil.h"
 #include <iostream>
 #include <set>
 
@@ -39,129 +41,160 @@ namespace opencollada
 
 namespace std
 {
-    template<>
-    struct less<opencollada::IdLine>
-    {
-        bool operator () (const opencollada::IdLine& a, const opencollada::IdLine& b) const
-        {
-            return a < b;
-        }
-    };
+	template<>
+	struct less<opencollada::IdLine>
+	{
+		bool operator () (const opencollada::IdLine& a, const opencollada::IdLine& b) const
+		{
+			return a < b;
+		}
+	};
 }
 
 namespace opencollada
 {
-	const char* colladaNamespace141 = "http://www.collada.org/2005/11/COLLADASchema";
-	const char* colladaSchema141 = "collada_schema_1_4_1.xsd";
+	extern const char* colladaNamespace141;
+	extern const char* colladaSchemaFileName141;
+	extern XmlSchema colladaSchema141;
 
-	const char* colladaNamespace15 = "http://www.collada.org/2008/03/COLLADASchema";
-	const char* colladaSchema15 = "collada_schema_1_5.xsd";
+	extern const char* colladaNamespace15;
+	extern const char* colladaSchemaFileName15;
+	extern XmlSchema colladaSchema15;
 
-	DaeValidator::DaeValidator(const Dae & dae)
-		: mDae(dae)
-	{}
+	DaeValidator::DaeValidator(const list<string> & daePaths)
+	{
+		mDaePaths.reserve(daePaths.size());
+		mDaePaths.insert(mDaePaths.end(), daePaths.begin(), daePaths.end());
+	}
 
-	int DaeValidator::checkAll() const
+	int DaeValidator::for_each_dae(const function<int(const Dae &)> & task) const
 	{
 		int result = 0;
-		result |= checkSchema();
-		result |= checkUniqueIds();
+		for (const auto & daePath : mDaePaths)
+		{
+			Dae dae;
+			dae.readFile(daePath);
+			if (dae)
+			{
+				result |= task(dae);
+			}
+			else
+			{
+				result |= 1;
+				cerr << "Error loading " << daePath << endl;
+			}
+		}
 		return result;
 	}
 
-	// Split string by whitespace
-	vector<string> Split(const string & s)
+	int DaeValidator::checkAll() const
 	{
-		vector<string> parts;
-		istringstream iss(s);
-		while (iss && !iss.eof())
-		{
-			string sub;
-			iss >> sub;
-			parts.emplace_back(sub);
-		}
-		return parts;
+		return for_each_dae([&](const Dae & dae) {
+			return CheckAll(dae);
+		});
+	}
+
+	int DaeValidator::CheckAll(const Dae & dae)
+	{
+		return
+			CheckSchema(dae) |
+			CheckUniqueIds(dae);
 	}
 
 	int DaeValidator::checkSchema(const string & schema_uri) const
 	{
-		int result = 0;
 		if (schema_uri.empty())
 		{
-			// Get root <COLLADA> element
-			auto collada = mDae.root();
-			if (!collada)
-			{
-				cerr << "Can't find document root" << endl;
-				return 1;
-			}
+			return for_each_dae([&](const Dae & dae) {
+				return CheckSchema(dae);
+			});
+		}
 
-			if (collada.name() != "COLLADA")
-			{
-				cerr << "Root element is not <COLLADA>" << endl;
-				return 1;
-			}
+		XmlSchema schema;
+		schema.readFile(schema_uri);
+		if (schema)
+		{
+			return for_each_dae([&](const Dae & dae) {
+				return ValidateAgainstSchema(dae, schema);
+			});
+		}
 
-			// Get COLLADA namespace
-			auto xmlns = collada.ns();
-			if (!xmlns)
-			{
-				cerr << "COLLADA element has no namespace" << endl;
-				return 1;
-			}
+		cerr << "Error loading " << schema_uri << endl;
+		return 1;
+	}
 
-			// Determine COLLADA version used by input dae file
-			auto href = xmlns.href();
-			if (href == colladaNamespace141)
-			{
-				result |= validateAgainstFile(colladaSchema141);
-			}
-			else if (href == colladaNamespace15)
-			{
-				result |= validateAgainstFile(colladaSchema15);
-			}
-			else
-			{
-				cerr << "Can't determine COLLADA version used by input file" << endl;
-				return 1;
-			}
+	int DaeValidator::CheckSchema(const Dae & dae)
+	{
+		int result = 0;
 
-			set<string> xsdURLs;
+		// Get root <COLLADA> element
+		auto collada = dae.root();
+		if (!collada)
+		{
+			cerr << "Can't find document root" << endl;
+			return 1;
+		}
 
-			// Find xsi:schemaLocation attributes in dae and try to validate against specified xsd documents
-			auto elements = mDae.root().selectNodes("//*[@xsi:schemaLocation]");
-			for (const auto & element : elements)
-			{
-				if (auto schemaLocation = element.attribute("schemaLocation"))
-				{
-					vector<string> parts = Split(schemaLocation.value());
-					// Parse pairs of namespace/xsd and take second element
-					for (size_t i = 1; i < parts.size(); i += 2)
-					{
-						xsdURLs.insert(parts[i]);
-					}
-				}
-			}
+		if (collada.name() != "COLLADA")
+		{
+			cerr << "Root element is not <COLLADA>" << endl;
+			return 1;
+		}
 
-			for (const auto & URL : xsdURLs)
-			{
-				int tmpResult = validateAgainstFile(URL);
-				if (tmpResult == 2)
-				{
-					std::cout
-						<< "Warning: can't load \"" << URL << "\"." << endl
-						<< "Some parts of the document will not be validated." << endl;
-				}
-				else
-				{
-					result |= tmpResult;
-				}
-			}
+		// Get COLLADA namespace
+		auto xmlns = collada.ns();
+		if (!xmlns)
+		{
+			cerr << "COLLADA element has no namespace" << endl;
+			return 1;
+		}
+
+		// Determine COLLADA version used by input dae file
+		auto href = xmlns.href();
+		if (href == colladaNamespace141)
+		{
+			result |= ValidateAgainstSchema(dae, colladaSchema141);
+		}
+		else if (href == colladaNamespace15)
+		{
+			result |= ValidateAgainstSchema(dae, colladaSchema15);
 		}
 		else
 		{
-			// Validate against specified schema only
-			result |= validateAgainstFile(schema_uri);
+			cerr << "Can't determine COLLADA version used by input file" << endl;
+			return 1;
+		}
+
+		set<string> xsdURLs;
+
+		// Find xsi:schemaLocation attributes in dae and try to validate against specified xsd documents
+		auto elements = dae.root().selectNodes("//*[@xsi:schemaLocation]");
+		for (const auto & element : elements)
+		{
+			if (auto schemaLocation = element.attribute("schemaLocation"))
+			{
+				vector<string> parts = String::Split(schemaLocation.value());
+				// Parse pairs of namespace/xsd and take second element
+				for (size_t i = 1; i < parts.size(); i += 2)
+				{
+					xsdURLs.insert(parts[i]);
+				}
+			}
+		}
+
+		for (const auto & URL : xsdURLs)
+		{
+			int tmpResult = ValidateAgainstFile(dae, URL);
+			if (tmpResult == 2)
+			{
+				std::cout
+					<< "Warning: can't load \"" << URL << "\"." << endl
+					<< "Some parts of the document will not be validated." << endl;
+			}
+			else
+			{
+				result |= tmpResult;
+			}
 		}
 
 		return result;
@@ -175,8 +208,15 @@ namespace opencollada
 
 	int DaeValidator::checkUniqueIds() const
 	{
+		return for_each_dae([&](const Dae & dae) {
+			return CheckUniqueIds(dae);
+		});
+	}
+
+	int DaeValidator::CheckUniqueIds(const Dae & dae)
+	{
 		int result = 0;
-		XmlNodeSet nodes = mDae.root().selectNodes("//*[@id]");
+		XmlNodeSet nodes = dae.root().selectNodes("//*[@id]");
 		set<IdLine> ids;
 		for (const auto & node : nodes)
 		{
@@ -187,7 +227,7 @@ namespace opencollada
 			auto it = ids.find(id_line);
 			if (it != ids.end())
 			{
-				cerr << mDae.getURI() << ":" << node.line() << ": Duplicated id \"" << id_line.getId() << "\". See first declaration at line " << it->getLine() << "." << endl;
+				cerr << dae.getURI() << ":" << node.line() << ": Duplicated id \"" << id_line.getId() << "\". See first declaration at line " << it->getLine() << "." << endl;
 				result |= 1;
 			}
 			else
@@ -197,8 +237,6 @@ namespace opencollada
 		}
 		return result;
 	}
-
-
 
 	int DaeValidator::checkReferencedJointController() const
 	{
@@ -492,11 +530,9 @@ namespace opencollada
 			return 2;
 	}
 
-
-	int DaeValidator::validateAgainstFile(const string & xsdPath) const
+	int DaeValidator::ValidateAgainstFile(const Dae & dae, const string & xsdPath)
 	{
 		// Open xsd
-		cout << "Validating against " << xsdPath << endl;
 		XmlSchema xsd;
 		xsd.readFile(xsdPath.c_str());
 		if (!xsd)
@@ -504,13 +540,11 @@ namespace opencollada
 			cerr << "Error loading " << xsdPath << endl;
 			return 2;
 		}
+		return ValidateAgainstSchema(dae, xsd);
+	}
 
-		// Validate dae against xsd
-		if (!xsd.validate(mDae))
-		{
-			return 1;
-		}
-
-		return 0;
+	int DaeValidator::ValidateAgainstSchema(const Dae & dae, const XmlSchema & schema)
+	{
+		return schema.validate(dae) ? 0 : 1;
 	}
 }
