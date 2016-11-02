@@ -44,7 +44,7 @@ namespace opencollada
 		static int CheckReferencedJointsBySkinController(const Dae & dae);
 		static int CheckisSkeletonRootExistToResolveController(const Dae & dae);
 		static int CheckCompleteBindPose(const Dae & dae);
-		static int checkSkinController(const Dae & dae);
+		static int CheckSkinController(const Dae & dae);
 
 		int for_each_dae(const std::function<int(const Dae &)> & task) const;
 		static int ValidateAgainstFile(const Dae & dae, const std::string & xsdPath);

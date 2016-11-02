@@ -99,11 +99,7 @@ namespace opencollada
 		return
 			CheckSchema(dae) |
 			CheckUniqueIds(dae) |
-			CheckReferencedJointController(dae) |
-			CheckSkeletonRoots(dae) |
-			CheckReferencedJointsBySkinController(dae) |
-			CheckCompleteBindPose(dae) |
-			CheckisSkeletonRootExistToResolveController(dae);
+			CheckSkinController(dae);
 	}
 
 	int DaeValidator::checkSchema(const string & schema_uri) const
@@ -286,7 +282,7 @@ namespace opencollada
 
 				if (!found)
 				{
-					cerr << "checkReferencedJointController -- Error: " << skinNodeName << "in" << controllerID << " controller is not referenced in the visual scene" << endl;
+					cerr << "checkReferencedJointController -- Error: " << skinNodeName << " in " << controllerID << " controller is not referenced in the visual scene" << endl;
 					result |= 1;
 				}	
 			}
@@ -541,18 +537,23 @@ namespace opencollada
 
 	int DaeValidator::checkSkinController() const
 	{
-		bool result = true;
+		return for_each_dae([&](const Dae & dae) {
+			return CheckSkinController(dae);
+		});
+	}
 
-		result *= !checkReferencedJointController();
-		result *= !checkSkeletonRoots();
-		result *= !checkReferencedJointsBySkinController();
-		result *= !checkisSkeletonRootExistToResolveController();
-		result *= !checkCompleteBindPose();
 
-		if (result)
-			return 0;
-		else
-			return 2;
+	int DaeValidator::CheckSkinController(const Dae & dae)
+	{
+		int result = 0;
+
+		result |= DaeValidator::CheckReferencedJointController(dae);
+		result |= DaeValidator::CheckSkeletonRoots(dae);
+		result |= DaeValidator::CheckReferencedJointsBySkinController(dae);
+		result |= DaeValidator::CheckisSkeletonRootExistToResolveController(dae);
+		result |= DaeValidator::CheckCompleteBindPose(dae);
+
+		return result;
 	}
 
 	int DaeValidator::ValidateAgainstFile(const Dae & dae, const string & xsdPath)
