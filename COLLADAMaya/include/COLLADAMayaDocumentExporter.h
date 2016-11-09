@@ -173,7 +173,7 @@ namespace COLLADAMaya
         * Exports all data of the current scene.
         * @param selectionOnly True, if just the selected elements should be exported.
         */
-        void exportCurrentScene ( bool selectionOnly );
+        MStatus exportCurrentScene ( bool selectionOnly );
 
         /**
          * Returns a pointer to the scene graph.

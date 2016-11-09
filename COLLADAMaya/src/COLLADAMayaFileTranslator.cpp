@@ -298,15 +298,13 @@ namespace COLLADAMaya
     /************************************************************************/
     MStatus FileTranslator::exportIntoFile ( const MString& filename, const bool selectionOnly )
     {
-        MStatus status = MS::kSuccess;
-
         /** To get the time */
         clock_t startClock, endClock;
         startClock = clock();
 
         // Actually export the document
         DocumentExporter documentExporter ( NativeString(filename.asChar()) );
-        documentExporter.exportCurrentScene ( selectionOnly );
+        MStatus status = documentExporter.exportCurrentScene ( selectionOnly );
 
         // Display some closing information.
         endClock = clock();

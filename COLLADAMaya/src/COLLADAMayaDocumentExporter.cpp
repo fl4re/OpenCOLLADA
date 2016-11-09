@@ -201,7 +201,7 @@ namespace COLLADAMaya
 	
 
     //---------------------------------------------------------------
-    void DocumentExporter::exportCurrentScene ( bool selectionOnly )
+    MStatus DocumentExporter::exportCurrentScene ( bool selectionOnly )
     {
         mIsImport = false;
 
