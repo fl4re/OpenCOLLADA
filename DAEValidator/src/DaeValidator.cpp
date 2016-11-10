@@ -99,11 +99,7 @@ namespace opencollada
 		return
 			CheckSchema(dae) |
 			CheckUniqueIds(dae) |
-			CheckReferencedJointController(dae) |
-			CheckSkeletonRoots(dae) |
-			CheckReferencedJointsBySkinController(dae) |
-			CheckCompleteBindPose(dae) |
-			CheckisSkeletonRootExistToResolveController(dae);
+			CheckLOD(dae);
 	}
 
 	int DaeValidator::checkSchema(const string & schema_uri) const
@@ -537,6 +533,172 @@ namespace opencollada
 
 		return result;
 	}
+
+
+	int DaeValidator::checkLOD() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return CheckLOD(dae);
+		});
+	}
+
+	static int recursiveSearchLOD(const Dae & dae, string LODUrl)
+	{
+		int result = 0;
+
+		string research = "//collada:library_nodes//" + string("collada:node[@id=") + string("'") + LODUrl + "'" + "]";
+		XmlNodeSet resultnodes = dae.root().selectNodes(research);
+
+		if (!resultnodes.size())
+		{
+			cerr << "checkLOD -- Error: " << LODUrl << " doesn't exist in library_nodes" << endl;
+			result |= 1;
+		}
+
+		for (const auto& resultnode : resultnodes)
+		{
+			string nodeName = resultnode.attribute("name").value();
+				
+			// search for recursive lod
+			string researchproxy = "//collada:node[@id=" + string("'") + LODUrl + "'" + "]" + string("//lod:proxy");
+
+			XmlNodeSet sourceLODs = dae.root().selectNodes(researchproxy);
+			for (const auto& sourceLOD : sourceLODs)
+			{
+				string LODUrl = sourceLOD.attribute("url").value();
+				size_t posLODUrln = LODUrl.find_last_of('#');
+				LODUrl = LODUrl.substr(posLODUrln + 1);
+
+				result |= recursiveSearchLOD(dae, LODUrl);
+			}
+				
+			// search for instance node
+			string researchInstanceNode = "//collada:node[@id=" + string("'") + LODUrl + "'" + "]" + string("//collada:instance_node");
+			XmlNodeSet SourceInstanceNode = dae.root().selectNodes(researchInstanceNode);
+
+			// search for instance_node
+			/*
+			for (const auto& resultInstanceNode : SourceInstanceNode)
+			{
+				string InstanceNodeUrl = resultInstanceNode.attribute("url").value();
+
+				// search for node referenced by instance node
+				InstanceNodeUrl = InstanceNodeUrl.substr(1);
+				string researchNode = "//collada:library_nodes//" + string("collada:node[@id=") + string("'") + InstanceNodeUrl + "'" + "]";
+				XmlNodeSet SourceNodes = dae.root().selectNodes(researchNode);
+				
+				if (!SourceNodes.size())
+				{
+					result |= 1;
+					cerr << "checkLOD -- Error: " << InstanceNodeUrl << " doesn't exist in library_nodes" << endl;
+				}
+					
+
+				for (const auto& result : SourceNodes)
+				{
+					string nodeName = result.attribute("name").value();
+				}
+			}
+			*/
+
+			// search for instance_geometry
+			string researchInstanceGeometry = "//collada:node[@id=" + string("'") + LODUrl + "'" + "]" + string("//collada:instance_geometry");
+			XmlNodeSet SourceInstanceGeometry = dae.root().selectNodes(researchInstanceGeometry);
+
+			if (!SourceInstanceGeometry.size() && !SourceInstanceNode.size())
+			{
+				result |= 1;
+				cerr << "checkLOD -- Error: No instance_geometry Or No instance_node in " << LODUrl << " node" << endl;
+			}
+
+			/*
+			for (const auto& resultInstanceGeometry : SourceInstanceGeometry)
+			{
+				string InstanceGeometryUrl = resultInstanceGeometry.attribute("url").value();
+
+				// search for node referenced by instance node
+				InstanceGeometryUrl = InstanceGeometryUrl.substr(1);
+				string researchGeometry = "//collada:library_geometries//" + string("collada:geometry[@id=") + string("'") + InstanceGeometryUrl + "'" + "]";
+				XmlNodeSet SourceGeometries = dae.root().selectNodes(researchGeometry);
+
+				if (!SourceGeometries.size())
+				{
+					result |= 1;
+					cerr << "checkLOD -- Error: " << InstanceGeometryUrl << " doesn't exist in library_geometry" << endl;
+				}
+
+
+				for (const auto& result : SourceGeometries)
+				{
+					string nodeName = result.attribute("name").value();
+				}
+			}
+			*/
+
+
+		}
+
+		return result;
+	}
+
+	int DaeValidator::CheckLOD(const Dae & dae)
+	{
+		int result = 0;
+
+		XmlNodeSet sourceLOD = dae.root().selectNodes("//collada:library_visual_scenes//lod:proxy");
+		for (const auto& source : sourceLOD)
+		{
+			string LODUrl = source.attribute("url").value();
+			size_t posLODUrln = LODUrl.find_last_of('#');
+			string LODUrl1 = LODUrl.substr(posLODUrln + 1);
+
+			result |= recursiveSearchLOD(dae, LODUrl1);
+
+			// search for 1st instance node
+			string research = "//lod:proxy[@url=" + string("'") + LODUrl + "'" + "]" +"/ancestor::collada:instance_node";
+			
+			XmlNodeSet resultInstanceNodes = dae.root().selectNodes(research);
+
+			if (!resultInstanceNodes.size())
+			{
+				result |= 1;
+
+				string research = "//lod:proxy[@url=" + string("'") + LODUrl + "'" + "]" + "/ancestor::collada:node";
+				XmlNodeSet resultNodes = dae.root().selectNodes(research);
+				for (const auto& source : resultNodes)
+				{
+					string NodeId = source.attribute("id").value();
+					cerr << "checkLOD -- Error: No instance_node in " << NodeId << " node" << endl;
+				}
+			}
+
+			/*
+			for (const auto& instanceNode : resultInstanceNodes)
+			{
+				string instanceNodeUrl = instanceNode.attribute("url").value();
+				
+				instanceNodeUrl = instanceNodeUrl.substr(1);
+				string researchNode = "//collada:library_nodes//" + string("collada:node[@id=") + string("'") + instanceNodeUrl + "'" + "]";
+				XmlNodeSet SourceNodes = dae.root().selectNodes(researchNode);
+
+				if (!SourceNodes.size())
+				{
+					cerr << "checkLOD -- Error: " << instanceNodeUrl << " doesn't exist in library_nodes" << endl;
+					result |= 1;
+				}
+					
+
+				for (const auto& result : SourceNodes)
+				{
+					string nodeName = result.attribute("name").value();
+				}
+			}
+			*/
+		}
+
+		return result;
+	}
+
 
 	int DaeValidator::ValidateAgainstFile(const Dae & dae, const string & xsdPath)
 	{

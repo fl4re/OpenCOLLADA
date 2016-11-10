@@ -32,6 +32,8 @@ namespace opencollada
 		/** Check if we have a complete bind pose. */
 		int checkCompleteBindPose() const;
 
+		int checkLOD() const;
+
 	private:
 		static int CheckAll(const Dae & dae);
 		static int CheckSchema(const Dae & dae);
@@ -41,6 +43,9 @@ namespace opencollada
 		static int CheckReferencedJointsBySkinController(const Dae & dae);
 		static int CheckisSkeletonRootExistToResolveController(const Dae & dae);
 		static int CheckCompleteBindPose(const Dae & dae);
+
+		static int CheckLOD(const Dae & dae);
+
 
 		int for_each_dae(const std::function<int(const Dae &)> & task) const;
 		static int ValidateAgainstFile(const Dae & dae, const std::string & xsdPath);

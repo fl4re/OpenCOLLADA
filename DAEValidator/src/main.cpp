@@ -21,6 +21,8 @@ namespace opencollada
 	const char* checkSkeletonRoots = "--check-skeleton-roots";
 	const char* checkReferencedJointsBySkinController = "--check-referenced-joints-by-skin-controller";
 	const char* checkisSkeletonRootExistToResolveController = "--check-is-skeleton-root-exist-to-resolve-controller";
+	const char* checkLOD = "--check-LOD";
+
 	const char* recursive = "--recursive";
 	const char* quiet = "--quiet";
 
@@ -48,6 +50,7 @@ int main(int argc, char* argv[])
 	argparse.addArgument(checkSkeletonRoots).flags(flag_checkOption);
 	argparse.addArgument(checkReferencedJointsBySkinController).flags(flag_checkOption);
 	argparse.addArgument(checkisSkeletonRootExistToResolveController).flags(flag_checkOption);
+	argparse.addArgument(checkLOD).flags(flag_checkOption);
 	argparse.addArgument(recursive);
 	argparse.addArgument(quiet);
 
@@ -133,6 +136,12 @@ int main(int argc, char* argv[])
 		if (argparse.findArgument(checkisSkeletonRootExistToResolveController))
 		{
 			result |= validator.checkisSkeletonRootExistToResolveController();
+		}
+
+
+		if (argparse.findArgument(checkLOD))
+		{
+			result |= validator.checkLOD();
 		}
 
 		if (const auto & arg = argparse.findArgument(checkSchema))
