@@ -47,6 +47,7 @@ set(SRC
 
 set(libDAEValidator_libs
 	${LIBXML2_LIBRARIES}
+	xerces
 )
 
 if (WIN32)
@@ -58,6 +59,7 @@ endif ()
 include_directories(
 	${libDAEValidator_include_dirs}
 	${LIBXML2_INCLUDE_DIR}
+	${xerces_include_dirs}
 )
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
@@ -65,6 +67,10 @@ link_directories(${LIBRARY_OUTPUT_PATH})
 
 add_executable(${name} ${SRC})
 target_link_libraries(${name} ${libDAEValidator_libs})
+
+add_definitions(
+	-DXERCES_STATIC_LIBRARY
+	)
 
 if (NOT LIBXML2_FOUND)
 	add_definitions(
@@ -74,6 +80,7 @@ if (NOT LIBXML2_FOUND)
 		-DLIBXML_REGEXP_ENABLED
 		-DLIBXML_SCHEMAS_ENABLED
 		-DLIBXML_XPATH_ENABLED
+		-DLIBXML_TREE_ENABLED
 		)
 	if (USE_STATIC)
 		add_dependencies(${name} xml_static)

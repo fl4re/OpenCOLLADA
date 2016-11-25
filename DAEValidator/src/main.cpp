@@ -28,6 +28,78 @@ namespace opencollada
 	XmlSchema colladaSchema15;
 }
 
+#include "xercesc/dom/DOMError.hpp"
+#include "xercesc/dom/DOMErrorHandler.hpp"
+#include "xercesc/dom/DOMLocator.hpp"
+#include "xercesc/sax/ErrorHandler.hpp"
+#include "xercesc/sax/SAXParseException.hpp"
+#include "xercesc/util/PlatformUtils.hpp"
+#include "xercesc/parsers/XercesDOMParser.hpp"
+using namespace XERCES_CPP_NAMESPACE;
+
+class error_handler :
+	//public DOMErrorHandler
+	public ErrorHandler
+{
+public:
+	//virtual bool handleError(const DOMError& domError) override
+	//{
+	//	auto locator = domError.getLocation();
+	//	cout << locator->getURI() << ":" << locator->getLineNumber() << ":" << locator->getColumnNumber() << ": " << domError.getMessage() << endl;
+	//	return true; // continue
+	//}
+	virtual void warning(const SAXParseException& exc) override
+	{
+		wstring wmsg(exc.getMessage());
+		string msg(wmsg.begin(), wmsg.end());
+		cout << exc.getLineNumber() << ":" << exc.getColumnNumber() << ": " << msg << endl;
+	}
+
+	virtual void error(const SAXParseException& exc) override
+	{
+		warning(exc);
+	}
+
+	virtual void fatalError(const SAXParseException& exc) override
+	{
+		warning(exc);
+	}
+
+	virtual void resetErrors() override
+	{}
+};
+
+void xerces_test(const string & path)
+{
+	XMLPlatformUtils::Initialize();
+	{
+		XercesDOMParser domParser;
+		//bfs::path pXSD = absolute(schemaFilePath);
+		string pXSD("H:\\Jerome\\fl4re\\OpenCOLLADA\\cmake_temp\\bin\\Debug\\collada_schema_1_4_1.xsd");
+		if (domParser.loadGrammar(pXSD.c_str(), Grammar::SchemaGrammarType) == NULL)
+		{
+			cout << "couldn't load schema" << endl;
+		}
+
+		error_handler parserErrorHandler;
+
+		domParser.setErrorHandler(&parserErrorHandler);
+		domParser.setValidationScheme(XercesDOMParser::Val_Always);
+		domParser.setDoNamespaces(true);
+		domParser.setDoSchema(true);
+		domParser.setValidationSchemaFullChecking(true);
+
+		domParser.setExternalNoNamespaceSchemaLocation(pXSD.c_str());
+
+		domParser.parse(path.c_str());
+		if (domParser.getErrorCount() != 0)
+		{
+			//throw Except("Invalid XML vs. XSD: " + parserErrorHandler.getErrors()); //merge a error coming from my interceptor ....
+		}
+	}
+	XMLPlatformUtils::Terminate();
+}
+
 int main(int argc, char* argv[])
 {
 	// Parse arguments
@@ -62,6 +134,8 @@ int main(int argc, char* argv[])
 	//}
 
 	string path = argparse.findArgument(0).getValue<string>();
+
+	//xerces_test(path);
 
 	list<string> daePaths;
 	if (Path::IsDirectory(path))

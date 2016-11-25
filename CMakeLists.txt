@@ -286,6 +286,7 @@ add_subdirectory(COLLADAStreamWriter)
 add_subdirectory(COLLADAValidator)
 
 # DAE validator app
+add_subdirectory(${EXTERNAL_LIBRARIES}/xerces-c-3.1.4)
 add_subdirectory(DAEValidator)
 
 # Library export
