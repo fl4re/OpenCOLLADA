@@ -691,6 +691,9 @@ namespace COLLADAMaya
 		PxMaterial(PhysXExporter & exporter, const PhysXXML::PxMaterial & mat)
 			: Element(exporter, CSWC::CSW_ELEMENT_PX_MATERIAL)
 		{
+			getStreamWriter().appendAttribute(CSWC::CSW_ATTRIBUTE_XMLNS, PhysXExporter::GetXMLNS());
+			getStreamWriter().appendAttribute(CSWC::CSW_ATTRIBUTE_XSI_SCHEMALOCATION, PhysXExporter::GetXSISchemaLocation());
+
 			exportFrictionCombineMode(mat);
 			exportRestitutionCombineMode(mat);
 		}
@@ -729,8 +732,6 @@ namespace COLLADAMaya
             getStreamWriter().appendAttribute(CSWC::CSW_ATTRIBUTE_PROFILE, profile);
 			if (profile == PhysXExporter::GetPhysXProfile())
 			{
-				getStreamWriter().appendAttribute(CSWC::CSW_ATTRIBUTE_XSI_SCHEMALOCATION, PhysXExporter::GetXSISchemaLocation());
-
 				exportPxMaterial(material);
 			}
         }
@@ -1214,8 +1215,6 @@ namespace COLLADAMaya
                 exporter.exportExtraAttributes(shape);
             }
 			else if (profile == PhysXExporter::GetPhysXProfile()) {
-				getStreamWriter().appendAttribute(CSWC::CSW_ATTRIBUTE_XSI_SCHEMALOCATION, PhysXExporter::GetXSISchemaLocation());
-
 				exportPxShape(pxShape);
 			}
         }
@@ -2614,8 +2613,6 @@ namespace COLLADAMaya
 				exporter.exportExtraAttributes(rigidBody);
 			}
 			else if (profile == PhysXExporter::GetPhysXProfile()) {
-				getStreamWriter().appendAttribute(CSWC::CSW_ATTRIBUTE_XSI_SCHEMALOCATION, PhysXExporter::GetXSISchemaLocation());
-
 				exportPxRigidBody(pxRigidBody);
 			}
         }
@@ -3882,8 +3879,6 @@ namespace COLLADAMaya
 				exporter.exportExtraAttributes(rigidConstraint);
 			}
 			else if (profile == PhysXExporter::GetPhysXProfile()) {
-				getStreamWriter().appendAttribute(CSWC::CSW_ATTRIBUTE_XSI_SCHEMALOCATION, PhysXExporter::GetXSISchemaLocation());
-
 				exportPxD6Joint(joint);
 			}
         }
