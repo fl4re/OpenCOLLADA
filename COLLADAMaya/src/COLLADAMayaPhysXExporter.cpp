@@ -4528,7 +4528,7 @@ namespace COLLADAMaya
     String PhysXExporter::mDefaultPhysicsSceneId = "collada_physics_scene";
     String PhysXExporter::mDefaultInstancePhysicsModelSid = "instancePhysicsModel";
 	String PhysXExporter::mPhysXProfile = "PhysX_3.x";
-	String PhysXExporter::mXMLNS = "http://www.collada.org/2005/11/COLLADASchema";
+	String PhysXExporter::mXMLNS = "http://www.collada.org/2016/08/COLLADAPhysX3Schema";
 	String PhysXExporter::mSchemaLocation = "http://www.collada.org/2016/08/COLLADAPhysX3Schema.xsd";
 
     PhysXExporter::PhysXExporter(StreamWriter& streamWriter, DocumentExporter& documentExporter)
