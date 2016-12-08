@@ -3738,6 +3738,9 @@ namespace COLLADAMaya
 		PxD6Joint(PhysXExporter& exporter, const PhysXXML::PxD6Joint & joint)
 			: Element(exporter, CSWC::CSW_ELEMENT_PX_D6JOINT)
 		{
+			getStreamWriter().appendAttribute(CSWC::CSW_ATTRIBUTE_XMLNS, PhysXExporter::GetXMLNS());
+			getStreamWriter().appendAttribute(CSWC::CSW_ATTRIBUTE_XSI_SCHEMALOCATION, PhysXExporter::GetXSISchemaLocation());
+
 			exportLocalPose0(joint);
 			exportLocalPose1(joint);
 			exportBreakForce(joint);
