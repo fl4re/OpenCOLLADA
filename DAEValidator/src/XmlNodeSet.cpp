@@ -80,6 +80,11 @@ namespace opencollada
 		return static_cast<size_t>(xmlXPathNodeSetGetLength(mXPathObject->nodesetval));
 	}
 
+	bool XmlNodeSet::empty() const
+	{
+		return size() == 0;
+	}
+
 	XmlNode XmlNodeSet::operator[](int index) const
 	{
 		if (index >= static_cast<int>(size()))

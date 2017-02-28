@@ -36,6 +36,7 @@ namespace opencollada
 		iterator begin() const;
 		iterator end() const;
 		size_t size() const;
+		bool empty() const;
 		XmlNode operator[](int index) const;
 
 	public:

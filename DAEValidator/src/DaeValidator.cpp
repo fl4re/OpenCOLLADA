@@ -625,8 +625,8 @@ namespace opencollada
 
 				// search parent's node
 				string research = "//collada:node[@name=" + string("'") + skinNode + "'" + "]" + "/parent::collada:node";
-				const auto & resultnodes = dae.root().selectNodes(research);
-				for (const auto& node : resultnodes)
+				const auto & nodes1 = dae.root().selectNodes(research);
+				for (const auto& node : nodes1)
 				{
 					string parentName = node.attribute("name").value();
 
@@ -645,12 +645,12 @@ namespace opencollada
 					// check if skinNode is the local root (all other node are children)
 					for (const auto& skinNode1 : skinNodes)
 					{
-						string research = "//collada:node[@name=" + string("'") + skinNode + "'" + "]" + "//collada:node[@name=" + string("'") + skinNode1 + "'" + "]";
 						if (skinNode.compare(skinNode1))
 						{
-							const auto & resultnodes = dae.root().selectNodes(research);
+							research = "//collada:node[@name=" + string("'") + skinNode + "'" + "]" + "//collada:node[@name=" + string("'") + skinNode1 + "'" + "]";
+							const auto & nodes2 = dae.root().selectNodes(research);
 
-							if (!(resultnodes.size() > 0))
+							if (nodes2.empty())
 							{
 								found1 = false;
 								result |= 1;

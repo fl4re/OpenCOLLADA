@@ -23,7 +23,7 @@ namespace opencollada
 	const char* checkCompleteBindPose = "--check-complete-bindpose";
 	const char* checkSkeletonRoots = "--check-skeleton-roots";
 	const char* checkReferencedJointsBySkinController = "--check-referenced-joints-by-skin-controller";
-	const char* checkisSkeletonRootExistToResolveController = "--check-is-skeleton-root-exist-to-resolve-controller";
+	const char* checkSkeletonRootExistsToResolveController = "--check-skeleton-root-exists-to-resolve-controller";
 	const char* checkSkinController = "--check-all-skin-controller";
 	const char* recursive = "--recursive";
 	const char* quiet = "--quiet";
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 	argparse.addArgument(checkCompleteBindPose).flags(flag_checkOption).help("Check if we have a complete bind pose.");
 	argparse.addArgument(checkSkeletonRoots).flags(flag_checkOption).help("Check if all skeleton roots in the instance controller are referenced in the DAE.");
 	argparse.addArgument(checkReferencedJointsBySkinController).flags(flag_checkOption).help("Check if all joints referenced by the skin controller are accessible via the defined skeleton roots.");
-	argparse.addArgument(checkisSkeletonRootExistToResolveController).flags(flag_checkOption).help("Check if there is at least one skeleton root to resolve the controller.");
+	argparse.addArgument(checkSkeletonRootExistsToResolveController).flags(flag_checkOption).help("Check if there is at least one skeleton root to resolve the controller.");
 	argparse.addArgument(checkSkinController).flags(flag_checkOption).help("Do all checks to Skin Controller.");
 	argparse.addArgument(recursive).help("Recursively parse directories. Ignored if 'path' is not a directory.");
 	argparse.addArgument(quiet).help("If set, no output is sent to standard out/err.");
@@ -155,9 +155,9 @@ int main(int argc, char* argv[])
 			result |= validator.checkCompleteBindPose();
 		}
 
-		if (argparse.findArgument(checkisSkeletonRootExistToResolveController))
+		if (argparse.findArgument(checkSkeletonRootExistsToResolveController))
 		{
-			result |= validator.checkisSkeletonRootExistToResolveController();
+			result |= validator.checkSkeletonRootExistsToResolveController();
 		}
 
 		if (argparse.findArgument(checkSkinController))
