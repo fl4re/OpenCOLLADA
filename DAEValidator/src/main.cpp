@@ -19,9 +19,17 @@ namespace opencollada
 	const char* checkUniqueIds = "--check-unique-ids";
 	const char* checkUniqueSids = "--check-unique-sids";
 	const char* checkLinks = "--check-links";
+	const char* checkReferencedJointController = "--check-joint-controller";
+	const char* checkCompleteBindPose = "--check-complete-bindpose";
+	const char* checkSkeletonRoots = "--check-skeleton-roots";
+	const char* checkReferencedJointsBySkinController = "--check-referenced-joints-by-skin-controller";
+	const char* checkisSkeletonRootExistToResolveController = "--check-is-skeleton-root-exist-to-resolve-controller";
+	const char* checkSkinController = "--check-all-skin-controller";
 	const char* recursive = "--recursive";
 	const char* quiet = "--quiet";
 	const char* help = "--help";
+
+	const size_t flag_checkOption = 0x01;
 
 	const char* colladaNamespace141 = "http://www.collada.org/2005/11/COLLADASchema";
 	const char* colladaSchemaFileName141 = "collada_schema_1_4_1.xsd";
@@ -38,12 +46,19 @@ int main(int argc, char* argv[])
 
 	// Parse arguments
 	ArgumentParser argparse(argc, argv);
+
 	argparse.addArgument().hint("path").help("Path to COLLADA document or directory to parse. If 'path' is a directory it is parsed for files with .DAE extension.");
-	argparse.addArgument(checkSchemaAuto).help("Regular XML schema validation.");
-	argparse.addArgument(checkSchema).numParameters(1).hint(0, "schema_path").help("Validate against arbitrary XML schema.");
-	argparse.addArgument(checkUniqueIds).help("Check that ids in documents are unique.");
-	argparse.addArgument(checkUniqueSids).help("Check that sids in documents are unique in their scope.");
-	argparse.addArgument(checkLinks).help("Check that URIs refer to valid files and/or elements.");
+	argparse.addArgument(checkSchemaAuto).flags(flag_checkOption).help("Regular XML schema validation.");
+	argparse.addArgument(checkSchema).flags(flag_checkOption).numParameters(1).hint(0, "schema_path").help("Validate against arbitrary XML schema.");
+	argparse.addArgument(checkUniqueIds).flags(flag_checkOption).help("Check that ids in documents are unique.");
+	argparse.addArgument(checkUniqueSids).flags(flag_checkOption).help("Check that sids in documents are unique in their scope.");
+	argparse.addArgument(checkLinks).flags(flag_checkOption).help("Check that URIs refer to valid files and/or elements.");
+	argparse.addArgument(checkReferencedJointController).flags(flag_checkOption).help("Check if all joints in the Name_array of each skin controller are referenced in the DAE.");
+	argparse.addArgument(checkCompleteBindPose).flags(flag_checkOption).help("Check if we have a complete bind pose.");
+	argparse.addArgument(checkSkeletonRoots).flags(flag_checkOption).help("Check if all skeleton roots in the instance controller are referenced in the DAE.");
+	argparse.addArgument(checkReferencedJointsBySkinController).flags(flag_checkOption).help("Check if all joints referenced by the skin controller are accessible via the defined skeleton roots.");
+	argparse.addArgument(checkisSkeletonRootExistToResolveController).flags(flag_checkOption).help("Check if there is at least one skeleton root to resolve the controller.");
+	argparse.addArgument(checkSkinController).flags(flag_checkOption).help("Do all checks to Skin Controller.");
 	argparse.addArgument(recursive).help("Recursively parse directories. Ignored if 'path' is not a directory.");
 	argparse.addArgument(quiet).help("If set, no output is sent to standard out/err.");
 	argparse.addArgument(help).help("Display help.");
@@ -102,11 +117,7 @@ int main(int argc, char* argv[])
 	DaeValidator validator(daePaths);
 	int result = 0;
 
-	if (!argparse.findArgument(checkSchemaAuto) &&
-		!argparse.findArgument(checkUniqueIds) &&
-		!argparse.findArgument(checkUniqueSids) &&
-		!argparse.findArgument(checkSchema) &&
-		!argparse.findArgument(checkLinks))
+	if (!argparse.hasSetArgument(flag_checkOption))
 	{
 		result |= validator.checkAll();
 	}
@@ -123,6 +134,36 @@ int main(int argc, char* argv[])
 
 		if (argparse.findArgument(checkLinks))
 			result |= validator.checkLinks();
+
+		if (argparse.findArgument(checkReferencedJointController))
+		{
+			result |= validator.checkReferencedJointController();
+		}
+
+		if (argparse.findArgument(checkSkeletonRoots))
+		{
+			result |= validator.checkSkeletonRoots();
+		}
+
+		if (argparse.findArgument(checkReferencedJointsBySkinController))
+		{
+			result |= validator.checkReferencedJointsBySkinController();
+		}
+
+		if (argparse.findArgument(checkCompleteBindPose))
+		{
+			result |= validator.checkCompleteBindPose();
+		}
+
+		if (argparse.findArgument(checkisSkeletonRootExistToResolveController))
+		{
+			result |= validator.checkisSkeletonRootExistToResolveController();
+		}
+
+		if (argparse.findArgument(checkSkinController))
+		{
+			result |= validator.checkSkinController();
+		}
 
 		if (const auto & arg = argparse.findArgument(checkSchema))
 			result |= validator.checkSchema(arg.getValue<string>());

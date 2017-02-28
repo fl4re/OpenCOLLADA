@@ -118,7 +118,8 @@ namespace opencollada
 			checkSchema(dae) |
 			checkUniqueIds(dae) |
 			checkUniqueSids(dae) |
-			checkLinks(dae);
+			checkLinks(dae) |
+			checkSkinController(dae);
 	}
 
 	int DaeValidator::checkSchema(const string & schema_uri) const
@@ -365,6 +366,334 @@ namespace opencollada
 		return result;
 	}
 
+	int DaeValidator::checkReferencedJointController() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkReferencedJointController(dae);
+		});
+	}
+
+	int DaeValidator::checkReferencedJointController(const Dae & dae) const
+	{
+		cout << "Checking controller joints..." << endl;
+
+		const auto & sourceSkinNodes = dae.root().selectNodes("//collada:library_controllers/collada:controller/collada:skin/collada:source/collada:Name_array");
+		const auto & visualSceneNodes = dae.root().selectNodes("//collada:node[@type='JOINT']");
+
+		int result = 0;
+
+		for (const auto& sourceSkinNode : sourceSkinNodes)
+		{
+			string NameArrayName = sourceSkinNode.attribute("id").value();
+			string controllerID = NameArrayName.substr(0, NameArrayName.substr(0, NameArrayName.find_last_of('-')).find_last_of('-'));
+
+			string skin = sourceSkinNode.text();
+			vector<string> skinNodes = String::Split(skin);
+
+			string visualNodeName;
+			string skinNodeName;
+
+			for (const auto& skinNode : skinNodes)
+			{
+				bool found = false;
+
+				skinNodeName = skinNode;
+				
+				for (const auto& visualNode : visualSceneNodes)
+				{
+					visualNodeName = visualNode.attribute("name").value();
+
+					if (skinNode.compare(visualNodeName) == 0)
+					{
+						found = true;
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					cerr << "checkReferencedJointController -- Error: " << skinNodeName << " in " << controllerID << " controller is not referenced in the visual scene" << endl;
+					result |= 1;
+				}	
+			}
+		}
+
+		return result;
+	}
+
+	int DaeValidator::checkSkeletonRoots() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkSkeletonRoots(dae);
+		});
+	}
+
+	int DaeValidator::checkSkeletonRoots(const Dae & dae) const
+	{
+		cout << "Checking skeleton roots..." << endl;
+
+		const auto & instanceControllers = dae.root().selectNodes("//collada:instance_controller");
+		const auto & visualSceneNodes = dae.root().selectNodes("//collada:node[@type='JOINT']");
+
+		int result = 0;
+
+		for (const auto& instanceController : instanceControllers)
+		{
+			string controllerUrl = instanceController.attribute("url").value();
+			size_t posController = controllerUrl.find_last_of('#');
+
+			string researchSkeleton = "//collada:instance_controller[@url=" + string("'") + controllerUrl + "'" + "]//collada:skeleton";
+			const auto & skeletonNodes = dae.root().selectNodes(researchSkeleton);
+
+			for (const auto& skeletonNode : skeletonNodes)
+			{
+				string visualNodeId;
+				string skeletonNodeName = skeletonNode.text();
+				size_t posSkeleton = skeletonNodeName.find_last_of('#');
+
+				bool found = false;
+
+				for (const auto& visualNode : visualSceneNodes)
+				{
+					visualNodeId = visualNode.attribute("id").value();
+
+					if (posSkeleton != string::npos)
+						if (skeletonNodeName.substr(posSkeleton + 1).compare(visualNodeId) == 0)
+						{
+							found = true;
+							break;
+						}
+				}
+
+				if (!found)
+				{
+					cerr << "checkSkeletonRoots -- Error: " << skeletonNodeName.substr(posSkeleton + 1) << " in " << controllerUrl.substr(posController + 1) << " instance controller is not referenced in the visual scene" << endl;
+					result |= 1;
+				}
+
+			}
+		}
+
+		return result;
+	}
+
+	int DaeValidator::checkReferencedJointsBySkinController() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkReferencedJointsBySkinController(dae);
+		});
+	}
+
+	int DaeValidator::checkReferencedJointsBySkinController(const Dae & dae) const
+	{
+		cout << "Checking controller skin joints..." << endl;
+
+		const auto & instanceControllers = dae.root().selectNodes("//collada:instance_controller");
+		const auto & controllers = dae.root().selectNodes("//collada:controller");
+
+		string controllerUrl;
+
+		int result = 0;
+
+		for (const auto& instanceController : instanceControllers)
+		{
+			controllerUrl = instanceController.attribute("url").value();
+			size_t posController = controllerUrl.find_last_of('#');
+
+			for (const auto& controller : controllers)
+			{
+				if (controller.attribute("id").value().compare(controllerUrl.substr(posController + 1)) == 0)
+				{
+					string researchSkinNodes = "//collada:Name_array[@id=" + string("'") + controller.attribute("id").value() + "-joints-array" + "'" + "]";
+					const auto & sourceSkinNodes = controller.selectNodes(researchSkinNodes);
+
+					for (const auto& sourceSkinNode : sourceSkinNodes)
+					{
+						string skin = sourceSkinNode.text();
+						vector<string> skinNodes = String::Split(skin);
+
+						string visualNodeName;
+						string skinNodeName;
+
+						for (const auto& node : skinNodes)
+						{
+							string researchSkeleton = "//collada:instance_controller[@url=" + string("'") + controllerUrl + "'" + "]//collada:skeleton";
+							const auto & skeletons = dae.root().selectNodes(researchSkeleton);
+
+							for (const auto& skeleton : skeletons)
+							{
+								string skeletonName = skeleton.text();
+								size_t posSkeleton = skeletonName.find_last_of('#');
+
+								skeletonName = skeletonName.substr(posSkeleton + 1);
+								string research2 = "//collada:node[@id=" + string("'") + skeletonName + "'" + "]";
+								const auto & rootNodes = dae.root().selectNodes(research2);
+
+								for (const auto& rootNode : rootNodes)
+								{
+									string rootNodeId = rootNode.attribute("id").value();
+									string rootNodeName = rootNode.attribute("name").value();
+
+									string research = "//collada:node[@id=" + string("'") + skeletonName + "'" + "]" + "//collada:node[@name=" + string("'") + node + "'" + "]";
+
+									const auto & resultnodes = rootNode.selectNodes(research);
+
+									if (resultnodes.size() > 0)
+									{
+										for (const auto& resultnode : resultnodes)
+										{
+											string name = resultnode.attribute("name").value();
+										}
+									}
+									else
+									{
+										if (rootNodeName.compare(node))
+										{
+											result |= 1;
+											cerr << "checkReferencedJointsBySkinController -- Error: " + node + " is not accessible from " + skeletonName + " skeleton root in " + controllerUrl.substr(posController + 1) + " instance controller"<< endl;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
+	int DaeValidator::checkSkeletonRootExistsToResolveController() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkSkeletonRootExistsToResolveController(dae);
+		});
+	}
+
+	int DaeValidator::checkSkeletonRootExistsToResolveController(const Dae & dae) const
+	{
+		cout << "Checking skeleton root exists..." << endl;
+
+		const auto & controllers = dae.root().selectNodes("//collada:controller");
+
+		int result = 0;
+
+		for (const auto& controller : controllers)
+		{
+			string controllerUrl = "#" + controller.attribute("id").value();
+
+			string researchSkeleton = "//collada:instance_controller[@url=" + string("'") + controllerUrl + "'" + "]//collada:skeleton";
+			const auto & skeletons = dae.root().selectNodes(researchSkeleton);
+
+			if (!skeletons.size())
+			{
+				cerr << "checkisSkeletonRootExistToResolveController -- Error: " << controller.attribute("id").value() << " controller has no skeleton to resolve it" << endl;
+				result |= 1;
+			}
+		}
+
+		return result;
+	}
+
+	/** Check if we have a complete bind pose. */
+	int DaeValidator::checkCompleteBindPose() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkCompleteBindPose(dae);
+		});
+	}
+
+	int DaeValidator::checkCompleteBindPose(const Dae & dae) const
+	{
+		cout << "Checking complete bind pose..." << endl;
+
+		const auto & sourceSkinNodes = dae.root().selectNodes("//collada:library_controllers/collada:controller/collada:skin/collada:source/collada:Name_array");
+		
+		int result = 0;
+
+		for (const auto& sourceSkinNode : sourceSkinNodes)
+		{
+			string skin = sourceSkinNode.text();
+			string arrayId = sourceSkinNode.attribute("id").value();
+
+			vector<string> skinNodes = String::Split(skin);
+			
+			for (const auto& skinNode : skinNodes)
+			{
+				bool found = false;
+
+				// search parent's node
+				string research = "//collada:node[@name=" + string("'") + skinNode + "'" + "]" + "/parent::collada:node";
+				const auto & resultnodes = dae.root().selectNodes(research);
+				for (const auto& node : resultnodes)
+				{
+					string parentName = node.attribute("name").value();
+
+					// search if it is in the skinNodes
+					for (const auto& skinNode1 : skinNodes)
+					{
+						if (!parentName.compare(skinNode1))
+							found = true;
+					}
+				}
+				
+				if (!found)
+				{
+					bool found1 = true;
+
+					// check if skinNode is the local root (all other node are children)
+					for (const auto& skinNode1 : skinNodes)
+					{
+						string research = "//collada:node[@name=" + string("'") + skinNode + "'" + "]" + "//collada:node[@name=" + string("'") + skinNode1 + "'" + "]";
+						if (skinNode.compare(skinNode1))
+						{
+							const auto & resultnodes = dae.root().selectNodes(research);
+
+							if (!(resultnodes.size() > 0))
+							{
+								found1 = false;
+								result |= 1;
+								break;
+							}
+						}
+					}
+
+					if (!found1)
+					{
+						arrayId = arrayId.substr(0, arrayId.substr(0, arrayId.find_last_of('-')).find_last_of('-'));
+						cerr << "checkCompleteBindPose -- Error in " << arrayId << " controller, " << skinNode << " has no parent defined" << endl;
+					}
+						
+				}
+			}
+		}
+
+		return result;
+	}
+
+
+	int DaeValidator::checkSkinController() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkSkinController(dae);
+		});
+	}
+
+
+	int DaeValidator::checkSkinController(const Dae & dae) const
+	{
+		int result = 0;
+
+		result |= DaeValidator::checkReferencedJointController(dae);
+		result |= DaeValidator::checkSkeletonRoots(dae);
+		result |= DaeValidator::checkReferencedJointsBySkinController(dae);
+		result |= DaeValidator::checkSkeletonRootExistsToResolveController(dae);
+		result |= DaeValidator::checkCompleteBindPose(dae);
+
+		return result;
+	}
+
 	int DaeValidator::checkLinks() const
 	{
 		return for_each_dae([&](const Dae & dae) {
@@ -445,7 +774,7 @@ namespace opencollada
 		return schema.validate(dae) ? 0 : 1;
 	}
 
-	int DaeValidator::CheckEscapeChar(const std::string & s)
+	int DaeValidator::CheckEscapeChar(const string & s)
 	{
 		if (s.find_first_of(" #$%&/:;<=>?@[\\:]^`{|}~") != string::npos)
 			return 1;

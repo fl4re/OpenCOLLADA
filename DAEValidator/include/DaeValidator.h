@@ -19,13 +19,25 @@ namespace opencollada
 		int checkUniqueIds() const;
 		int checkUniqueSids() const;
 		int checkLinks() const;
-
+		int checkReferencedJointController() const;
+		int checkSkeletonRoots() const;
+		int checkReferencedJointsBySkinController() const;
+		int checkSkeletonRootExistsToResolveController() const;
+		int checkCompleteBindPose() const;
+		int checkSkinController() const;
+		
 	private:
 		int checkSchema(const Dae & dae) const;
 		int checkAll(const Dae & dae) const;
 		int checkUniqueIds(const Dae & dae) const;
 		int checkUniqueSids(const Dae & dae) const;
 		int checkLinks(const Dae & dae) const;
+		int checkReferencedJointController(const Dae & dae) const;
+		int checkSkeletonRoots(const Dae & dae) const;
+		int checkReferencedJointsBySkinController(const Dae & dae) const;
+		int checkSkeletonRootExistsToResolveController(const Dae & dae) const;
+		int checkCompleteBindPose(const Dae & dae) const;
+		int checkSkinController(const Dae & dae) const;
 
 		int for_each_dae(const std::function<int(const Dae &)> & task) const;
 

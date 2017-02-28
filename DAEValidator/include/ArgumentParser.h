@@ -17,8 +17,10 @@ namespace opencollada
 		Argument& hint(const std::string & s); // Argument hint.
 		Argument& hint(size_t index, const std::string & s); // Argument parameter hint.
 		Argument& help(const std::string & s); // Argument help.
+		Argument& flags(size_t flags);
 
 		size_t getNumParameters() const;
+		size_t getFlags() const;
 		bool isSet() const;
 		bool isRequired() const;
 		std::string getHint() const;
@@ -47,6 +49,7 @@ namespace opencollada
 		std::string mHint;
 		std::string mHelp;
 		std::vector<std::string> mHints;
+		size_t mFlags = 0;
 		bool mSet = false;
 		bool mRequired = false;
 	};
@@ -70,6 +73,7 @@ namespace opencollada
 		const Argument& findArgument(size_t index);
 		size_t numSetArguments() const;
 		std::string usage() const;
+		bool hasSetArgument(size_t flags) const;
 
 	private:
 		std::map<std::string, Argument> mArguments;
