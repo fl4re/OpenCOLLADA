@@ -113,6 +113,7 @@ namespace opencollada
 		if (xmlXPathContextPtr context = xmlXPathNewContext(mNode->doc))
 		{
 			xmlXPathRegisterNs(context, BAD_CAST "collada", BAD_CAST "http://www.collada.org/2005/11/COLLADASchema");
+			xmlXPathRegisterNs(context, BAD_CAST "lod", BAD_CAST "http://www.collada.org/2016/08/COLLADALODSchema");
 			xmlXPathRegisterNs(context, BAD_CAST "xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
 
 			XmlNodeSet result(xmlXPathEvalExpression(BAD_CAST xpath.c_str(), context));

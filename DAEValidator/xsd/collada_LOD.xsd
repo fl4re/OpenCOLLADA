@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	xmlns="http://www.collada.org/2016/08/COLLADALODSchema"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.collada.org/2005/11/COLLADASchema"
+	targetNamespace="http://www.collada.org/2016/08/COLLADALODSchema"
+	elementFormDefault="qualified"
+	version="1.0.0"
+	xml:lang="EN"
+	xsi:schemaLocation="http://www.collada.org/2016/08/COLLADALODSchema D:\Dev\OpenCOLLADA\DAEValidator\xsd\collada_LOD.xsd">
+	<xs:import namespace="http://www.collada.org/2005/11/COLLADASchema" schemaLocation="http://www.khronos.org/files/collada_schema_1_4_1.xsd"/>
+	
+	<xs:simpleType name="float">
+		<xs:restriction base="xs:double"/>
+	</xs:simpleType>
+	
+	<xs:complexType name="proxy_type">
+		<xs:sequence>
+			<xs:element name="threshold" type="float" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="url" type="xs:anyURI"/>
+	</xs:complexType>
+	
+	
+	<xs:element name="proxy" type="proxy_type"/>
+	
+	
+	
+</xs:schema>

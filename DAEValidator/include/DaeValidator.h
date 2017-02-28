@@ -25,7 +25,8 @@ namespace opencollada
 		int checkSkeletonRootExistsToResolveController() const;
 		int checkCompleteBindPose() const;
 		int checkSkinController() const;
-		
+		int checkLOD() const;
+
 	private:
 		int checkSchema(const Dae & dae) const;
 		int checkAll(const Dae & dae) const;
@@ -38,6 +39,8 @@ namespace opencollada
 		int checkSkeletonRootExistsToResolveController(const Dae & dae) const;
 		int checkCompleteBindPose(const Dae & dae) const;
 		int checkSkinController(const Dae & dae) const;
+		int checkLOD(const Dae & dae) const;
+
 
 		int for_each_dae(const std::function<int(const Dae &)> & task) const;
 

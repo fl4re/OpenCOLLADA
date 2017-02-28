@@ -119,7 +119,8 @@ namespace opencollada
 			checkUniqueIds(dae) |
 			checkUniqueSids(dae) |
 			checkLinks(dae) |
-			checkSkinController(dae);
+			checkSkinController(dae) |
+			checkLOD(dae);
 	}
 
 	int DaeValidator::checkSchema(const string & schema_uri) const
@@ -672,7 +673,6 @@ namespace opencollada
 		return result;
 	}
 
-
 	int DaeValidator::checkSkinController() const
 	{
 		return for_each_dae([&](const Dae & dae) {
@@ -690,6 +690,96 @@ namespace opencollada
 		result |= DaeValidator::checkReferencedJointsBySkinController(dae);
 		result |= DaeValidator::checkSkeletonRootExistsToResolveController(dae);
 		result |= DaeValidator::checkCompleteBindPose(dae);
+
+		return result;
+	}
+
+	int DaeValidator::checkLOD() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkLOD(dae);
+		});
+	}
+
+	static int recursiveSearchLOD(const Dae & dae, string LODUrl)
+	{
+		int result = 0;
+
+		string research = "//collada:library_nodes//" + string("collada:node[@id=") + string("'") + LODUrl + "'" + "]";
+		const auto & resultnodes = dae.root().selectNodes(research);
+
+		if (!resultnodes.size())
+		{
+			cerr << "checkLOD -- Error: " << LODUrl << " doesn't exist in library_nodes" << endl;
+			result |= 1;
+		}
+
+		for (const auto& resultnode : resultnodes)
+		{
+			string nodeName = resultnode.attribute("name").value();
+				
+			// search for recursive LOD
+			string researchproxy = "//collada:node[@id=" + string("'") + LODUrl + "'" + "]" + string("//lod:proxy");
+
+			const auto & sourceLODs = dae.root().selectNodes(researchproxy);
+			for (const auto& sourceLOD : sourceLODs)
+			{
+				string url = sourceLOD.attribute("url").value();
+				size_t posLODUrln = url.find_last_of('#');
+				url = url.substr(posLODUrln + 1);
+
+				result |= recursiveSearchLOD(dae, url);
+			}
+				
+			// search for instance node
+			string researchInstanceNode = "//collada:node[@id=" + string("'") + LODUrl + "'" + "]" + string("//collada:instance_node");
+			const auto & SourceInstanceNode = dae.root().selectNodes(researchInstanceNode);
+			
+			// search for instance_geometry
+			string researchInstanceGeometry = "//collada:node[@id=" + string("'") + LODUrl + "'" + "]" + string("//collada:instance_geometry");
+			const auto & SourceInstanceGeometry = dae.root().selectNodes(researchInstanceGeometry);
+
+			if (!SourceInstanceGeometry.size() && !SourceInstanceNode.size())
+			{
+				result |= 1;
+				cerr << "checkLOD -- Error: No instance_geometry Or No instance_node in " << LODUrl << " node" << endl;
+			}
+		}
+
+		return result;
+	}
+
+	int DaeValidator::checkLOD(const Dae & dae) const
+	{
+		int result = 0;
+
+		const auto & sourceLOD = dae.root().selectNodes("//collada:library_visual_scenes//lod:proxy");
+		for (const auto& source : sourceLOD)
+		{
+			string LODUrl = source.attribute("url").value();
+			size_t posLODUrln = LODUrl.find_last_of('#');
+			string LODUrl1 = LODUrl.substr(posLODUrln + 1);
+
+			result |= recursiveSearchLOD(dae, LODUrl1);
+
+			// search for instance node
+			string research = "//lod:proxy[@url=" + string("'") + LODUrl + "'" + "]" +"/ancestor::collada:instance_node";
+			
+			const auto & resultInstanceNodes = dae.root().selectNodes(research);
+
+			if (!resultInstanceNodes.size())
+			{
+				result |= 1;
+
+				research = "//lod:proxy[@url=" + string("'") + LODUrl + "'" + "]" + "/ancestor::collada:node";
+				const auto & resultNodes = dae.root().selectNodes(research);
+				for (const auto& node : resultNodes)
+				{
+					string NodeId = node.attribute("id").value();
+					cerr << "checkLOD -- Error: No instance_node in " << NodeId << " node" << endl;
+				}
+			}
+		}
 
 		return result;
 	}
