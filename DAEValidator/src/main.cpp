@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
 	}
 
 	if (!argparse_ok) {
-		cerr << argparse.getParseError() << endl;
+		cout << argparse.getParseError() << endl;
 		cout << argparse.usage() << endl;
 		return 1;
 	}
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 	colladaSchema141.readFile(Path::Join(Path::GetExecutableDirectory(), colladaSchemaFileName141));
 	if (!colladaSchema141)
 	{
-		cerr << "Error loading " << Path::Join(Path::GetExecutableDirectory(), colladaSchemaFileName141) << endl;
+		cout << "Error loading " << Path::Join(Path::GetExecutableDirectory(), colladaSchemaFileName141) << endl;
 		return 1;
 	}
 
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 	//colladaSchema15.readFile(Path::Join(GetExecutableDirectory(), colladaSchemaFileName15));
 	//if (!colladaSchema15)
 	//{
-	//	cerr << "Error loading " << Path::Join(GetExecutableDirectory(), colladaSchemaFileName15) << endl;
+	//	cout << "Error loading " << Path::Join(GetExecutableDirectory(), colladaSchemaFileName15) << endl;
 	//	return 1;
 	//}
 
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
 	if (result == 0)
 		cout << "Validation SUCCEEDED." << endl;
 	else
-		cerr << "Validation FAILED." << endl;
+		cout << "Validation FAILED." << endl;
 
 	return result;
 }

@@ -99,7 +99,7 @@ namespace opencollada
 			else
 			{
 				result |= 1;
-				cerr << "Error loading " << daePath << endl;
+				cout << "Error loading " << daePath << endl;
 			}
 		}
 		return result;
@@ -141,7 +141,7 @@ namespace opencollada
 			});
 		}
 
-		cerr << "Error loading " << schema_uri << endl;
+		cout << "Error loading " << schema_uri << endl;
 		return 1;
 	}
 
@@ -155,13 +155,13 @@ namespace opencollada
 		auto collada = dae.root();
 		if (!collada)
 		{
-			cerr << "Can't find document root" << endl;
+			cout << "Can't find document root" << endl;
 			return 1;
 		}
 
 		if (collada.name() != Strings::COLLADA)
 		{
-			cerr << "Root element is not <" << Strings::COLLADA << ">" << endl;
+			cout << "Root element is not <" << Strings::COLLADA << ">" << endl;
 			return 1;
 		}
 
@@ -169,7 +169,7 @@ namespace opencollada
 		auto xmlns = collada.ns();
 		if (!xmlns)
 		{
-			cerr << "COLLADA element has no namespace" << endl;
+			cout << "COLLADA element has no namespace" << endl;
 			return 1;
 		}
 
@@ -182,12 +182,12 @@ namespace opencollada
 		else if (href == colladaNamespace15)
 		{
 			//result |= ValidateAgainstSchema(dae, colladaSchema15);
-			cerr << "COLLADA 1.5 not supported yet." << endl;
+			cout << "COLLADA 1.5 not supported yet." << endl;
 			return 1;
 		}
 		else
 		{
-			cerr << "Can't determine COLLADA version used by input file" << endl;
+			cout << "Can't determine COLLADA version used by input file" << endl;
 			return 1;
 		}
 
@@ -263,7 +263,7 @@ namespace opencollada
 			}
 			else if (!schema)
 			{
-				cerr << "Error loading " << schemaUri << endl;
+				cout << "Error loading " << schemaUri << endl;
 				result |= 1;
 			}
 		}
@@ -312,14 +312,14 @@ namespace opencollada
 			int checkEscapeCharResult = CheckEscapeChar(id);
 			if (checkEscapeCharResult != 0)
 			{
-				cerr << dae.getURI() << ":" << line << ": \"" << id << "\" contains non-escaped characters." << endl;
+				cout << dae.getURI() << ":" << line << ": \"" << id << "\" contains non-escaped characters." << endl;
 				result |= checkEscapeCharResult;
 			}
 
 			auto it = ids.find(id);
 			if (it != ids.end())
 			{
-				cerr << dae.getURI() << ":" << line << ": Duplicated id \"" << id << "\". See first declaration at line " << it->second << "." << endl;
+				cout << dae.getURI() << ":" << line << ": Duplicated id \"" << id << "\". See first declaration at line " << it->second << "." << endl;
 				result |= 1;
 			}
 			else
@@ -355,7 +355,7 @@ namespace opencollada
 				auto it = sids.find(sid);
 				if (it != sids.end())
 				{
-					cerr << dae.getURI() << ":" << line << ": Duplicated sid \"" << sid << "\". See first declaration at line " << it->second << "." << endl;
+					cout << dae.getURI() << ":" << line << ": Duplicated sid \"" << sid << "\". See first declaration at line " << it->second << "." << endl;
 					result |= 1;
 				}
 				else
@@ -413,7 +413,7 @@ namespace opencollada
 
 				if (!found)
 				{
-					cerr << "checkReferencedJointController -- Error: " << skinNodeName << " in " << controllerID << " controller is not referenced in the visual scene" << endl;
+					cout << "checkReferencedJointController -- Error: " << skinNodeName << " in " << controllerID << " controller is not referenced in the visual scene" << endl;
 					result |= 1;
 				}	
 			}
@@ -468,7 +468,7 @@ namespace opencollada
 
 				if (!found)
 				{
-					cerr << "checkSkeletonRoots -- Error: " << skeletonNodeName.substr(posSkeleton + 1) << " in " << controllerUrl.substr(posController + 1) << " instance controller is not referenced in the visual scene" << endl;
+					cout << "checkSkeletonRoots -- Error: " << skeletonNodeName.substr(posSkeleton + 1) << " in " << controllerUrl.substr(posController + 1) << " instance controller is not referenced in the visual scene" << endl;
 					result |= 1;
 				}
 
@@ -551,7 +551,7 @@ namespace opencollada
 										if (rootNodeName.compare(node))
 										{
 											result |= 1;
-											cerr << "checkReferencedJointsBySkinController -- Error: " + node + " is not accessible from " + skeletonName + " skeleton root in " + controllerUrl.substr(posController + 1) + " instance controller"<< endl;
+											cout << "checkReferencedJointsBySkinController -- Error: " + node + " is not accessible from " + skeletonName + " skeleton root in " + controllerUrl.substr(posController + 1) + " instance controller"<< endl;
 										}
 									}
 								}
@@ -589,7 +589,7 @@ namespace opencollada
 
 			if (!skeletons.size())
 			{
-				cerr << "checkisSkeletonRootExistToResolveController -- Error: " << controller.attribute("id").value() << " controller has no skeleton to resolve it" << endl;
+				cout << "checkisSkeletonRootExistToResolveController -- Error: " << controller.attribute("id").value() << " controller has no skeleton to resolve it" << endl;
 				result |= 1;
 			}
 		}
@@ -663,7 +663,7 @@ namespace opencollada
 					if (!found1)
 					{
 						arrayId = arrayId.substr(0, arrayId.substr(0, arrayId.find_last_of('-')).find_last_of('-'));
-						cerr << "checkCompleteBindPose -- Error in " << arrayId << " controller, " << skinNode << " has no parent defined" << endl;
+						cout << "checkCompleteBindPose -- Error in " << arrayId << " controller, " << skinNode << " has no parent defined" << endl;
 					}
 						
 				}
@@ -710,7 +710,7 @@ namespace opencollada
 
 		if (!resultnodes.size())
 		{
-			cerr << "checkLOD -- Error: " << LODUrl << " doesn't exist in library_nodes" << endl;
+			cout << "checkLOD -- Error: " << LODUrl << " doesn't exist in library_nodes" << endl;
 			result |= 1;
 		}
 
@@ -742,7 +742,7 @@ namespace opencollada
 			if (!SourceInstanceGeometry.size() && !SourceInstanceNode.size())
 			{
 				result |= 1;
-				cerr << "checkLOD -- Error: No instance_geometry Or No instance_node in " << LODUrl << " node" << endl;
+				cout << "checkLOD -- Error: No instance_geometry Or No instance_node in " << LODUrl << " node" << endl;
 			}
 		}
 
@@ -776,7 +776,7 @@ namespace opencollada
 				for (const auto& node : resultNodes)
 				{
 					string NodeId = node.attribute("id").value();
-					cerr << "checkLOD -- Error: No instance_node in " << NodeId << " node" << endl;
+					cout << "checkLOD -- Error: No instance_node in " << NodeId << " node" << endl;
 				}
 			}
 		}
@@ -804,7 +804,7 @@ namespace opencollada
 			const auto & uri = get<1>(t);
 			if (!Path::Exists(uri.nativePath()))
 			{
-				cerr << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
+				cout << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
 				result |= 1;
 			}
 			else if (!uri.fragment().empty())
@@ -816,7 +816,7 @@ namespace opencollada
 					auto id = ids.find(uri.fragment());
 					if (id == ids.end())
 					{
-						cerr << dae.getURI() << ":" << line << ": Can't resolve #" << uri.fragment() << endl;
+						cout << dae.getURI() << ":" << line << ": Can't resolve #" << uri.fragment() << endl;
 						result |= 1;
 					}
 				}
@@ -829,13 +829,13 @@ namespace opencollada
 						auto id = ext_ids.find(uri.fragment());
 						if (id == ext_ids.end())
 						{
-							cerr << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
+							cout << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
 							result |= 1;
 						}
 					}
 					else
 					{
-						cerr << dae.getURI() << ":" << line << ": " << uri << ": referenced file exists but has not been successfully loaded." << endl;
+						cout << dae.getURI() << ":" << line << ": " << uri << ": referenced file exists but has not been successfully loaded." << endl;
 						result |= 1;
 					}
 				}
@@ -851,7 +851,7 @@ namespace opencollada
 			auto id = ids.find(idref);
 			if (id == ids.end())
 			{
-				cerr << dae.getURI() << ":" << line << ": Can't resolve #" << idref << endl;
+				cout << dae.getURI() << ":" << line << ": Can't resolve #" << idref << endl;
 				result |= 1;
 			}
 		}
