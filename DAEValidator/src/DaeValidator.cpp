@@ -402,7 +402,7 @@ namespace opencollada
 				
 				for (const auto& visualNode : visualSceneNodes)
 				{
-					visualNodeName = visualNode.attribute("name").value();
+					visualNodeName = visualNode.attribute("sid").value();
 
 					if (skinNode.compare(visualNodeName) == 0)
 					{
