@@ -66,6 +66,7 @@ shellPrintXPathError()
 
 # functions from module dict
 dictCleanup()
+initializeDict()
 
 # functions from module encoding
 addEncodingAlias()
@@ -208,7 +209,6 @@ iOFTPMatch()
 iOHTTPMatch()
 normalizeWindowsPath()
 parserGetDirectory()
-popInputCallbacks()
 registerDefaultInputCallbacks()
 registerDefaultOutputCallbacks()
 registerHTTPPostCallbacks()
@@ -457,6 +457,7 @@ Class xmlNode(xmlCore)
     docCopyNode()
     docCopyNodeList()
     docSetRootElement()
+    firstElementChild()
     freeNode()
     freeNodeList()
     getBase()
@@ -468,6 +469,7 @@ Class xmlNode(xmlCore)
     isBlankNode()
     isText()
     lastChild()
+    lastElementChild()
     lineNo()
     listGetRawString()
     listGetString()
@@ -477,9 +479,11 @@ Class xmlNode(xmlCore)
     newNsPropEatName()
     newProp()
     newTextChild()
+    nextElementSibling()
     noNsProp()
     nodePath()
     nsProp()
+    previousElementSibling()
     prop()
     reconciliateNs()
     replaceNode()
@@ -518,6 +522,7 @@ Class xmlNode(xmlCore)
     xpathCastNodeToNumber()
     xpathCastNodeToString()
     xpathCmpNodes()
+    xpathNodeEval()
 
     # functions from module xpathInternals
     xpathNewNodeSet()
@@ -578,6 +583,7 @@ Class xmlDoc(xmlNode)
     encodeEntities()
     encodeEntitiesReentrant()
     encodeSpecialChars()
+    newEntity()
     parameterEntity()
 
     # functions from module relaxng
@@ -675,40 +681,6 @@ Class xmlDoc(xmlNode)
     xpointerNewContext()
 
 
-Class xmlAttr(xmlNode)
-
-    # functions from module debugXML
-    debugDumpAttr()
-    debugDumpAttrList()
-
-    # functions from module tree
-    copyProp()
-    copyPropList()
-    freeProp()
-    freePropList()
-    removeProp()
-
-    # functions from module valid
-    removeID()
-    removeRef()
-Class xmlReg()
-
-    # functions from module xmlregexp
-    regexpExec()
-    regexpIsDeterminist()
-    regexpPrint()
-
-
-Class relaxNgValidCtxt(relaxNgValidCtxtCore)
-
-    # functions from module relaxng
-    relaxNGValidateDoc()
-    relaxNGValidateFullElement()
-    relaxNGValidatePopElement()
-    relaxNGValidatePushCData()
-    relaxNGValidatePushElement()
-
-
 Class parserCtxt(parserCtxtCore)
     # accessors
     doc()
@@ -800,6 +772,39 @@ Class parserCtxt(parserCtxtCore)
     stringLenDecodeEntities()
 
 
+Class xmlAttr(xmlNode)
+
+    # functions from module debugXML
+    debugDumpAttr()
+    debugDumpAttrList()
+
+    # functions from module tree
+    copyProp()
+    copyPropList()
+    freeProp()
+    freePropList()
+    removeProp()
+
+    # functions from module valid
+    removeID()
+    removeRef()
+
+
+Class xmlAttribute(xmlNode)
+Class catalog()
+
+    # functions from module catalog
+    add()
+    catalogIsEmpty()
+    convertSGMLCatalog()
+    dump()
+    remove()
+    resolve()
+    resolvePublic()
+    resolveSystem()
+    resolveURI()
+
+
 Class xmlDtd(xmlNode)
 
     # functions from module debugXML
@@ -814,11 +819,295 @@ Class xmlDtd(xmlNode)
     dtdElementDesc()
     dtdQAttrDesc()
     dtdQElementDesc()
+
+
+Class xmlElement(xmlNode)
+
+
+Class xmlEntity(xmlNode)
+
+    # functions from module parserInternals
+    handleEntity()
+Class Error()
+    # accessors
+    code()
+    domain()
+    file()
+    level()
+    line()
+    message()
+
+    # functions from module xmlerror
+    copyError()
+    resetError()
+
+
+Class xmlNs(xmlNode)
+
+    # functions from module tree
+    copyNamespace()
+    copyNamespaceList()
+    freeNs()
+    freeNsList()
+    newChild()
+    newDocNode()
+    newDocNodeEatName()
+    newDocRawNode()
+    newNodeEatName()
+    newNsProp()
+    newNsPropEatName()
+    newTextChild()
+    setNs()
+    setNsProp()
+    unsetNsProp()
+
+    # functions from module xpathInternals
+    xpathNodeSetFreeNs()
+
+
+Class outputBuffer(ioWriteWrapper)
+
+    # functions from module HTMLtree
+    htmlDocContentDumpFormatOutput()
+    htmlDocContentDumpOutput()
+    htmlNodeDumpFormatOutput()
+    htmlNodeDumpOutput()
+
+    # functions from module tree
+    nodeDumpOutput()
+    saveFileTo()
+    saveFormatFileTo()
+
+    # functions from module xmlIO
+    getContent()
+    write()
+    writeString()
+
+
+Class inputBuffer(ioReadWrapper)
+
+    # functions from module xmlIO
+    grow()
+    push()
+    read()
+
+    # functions from module xmlreader
+    Setup()
+    newTextReader()
+Class xmlReg()
+
+    # functions from module xmlregexp
+    regexpExec()
+    regexpIsDeterminist()
+    regexpPrint()
 Class relaxNgParserCtxt()
 
     # functions from module relaxng
     relaxNGParse()
     relaxParserSetFlag()
+Class relaxNgSchema()
+
+    # functions from module relaxng
+    relaxNGDump()
+    relaxNGDumpTree()
+    relaxNGNewValidCtxt()
+
+    # functions from module xmlreader
+    RelaxNGSetSchema()
+
+
+Class relaxNgValidCtxt(relaxNgValidCtxtCore)
+
+    # functions from module relaxng
+    relaxNGValidateDoc()
+    relaxNGValidateFullElement()
+    relaxNGValidatePopElement()
+    relaxNGValidatePushCData()
+    relaxNGValidatePushElement()
+
+    # functions from module xmlreader
+    RelaxNGValidateCtxt()
+Class SchemaParserCtxt()
+
+    # functions from module xmlschemas
+    schemaParse()
+Class Schema()
+
+    # functions from module xmlreader
+    SetSchema()
+
+    # functions from module xmlschemas
+    schemaDump()
+    schemaNewValidCtxt()
+
+
+Class SchemaValidCtxt(SchemaValidCtxtCore)
+
+    # functions from module xmlreader
+    SchemaValidateCtxt()
+
+    # functions from module xmlschemas
+    schemaIsValid()
+    schemaSetValidOptions()
+    schemaValidCtxtGetOptions()
+    schemaValidCtxtGetParserCtxt()
+    schemaValidateDoc()
+    schemaValidateFile()
+    schemaValidateOneElement()
+    schemaValidateSetFilename()
+Class xmlTextReaderLocator()
+
+    # functions from module xmlreader
+    BaseURI()
+    LineNumber()
+
+
+Class xmlTextReader(xmlTextReaderCore)
+
+    # functions from module xmlreader
+    AttributeCount()
+    BaseUri()
+    ByteConsumed()
+    Close()
+    CurrentDoc()
+    CurrentNode()
+    Depth()
+    Encoding()
+    Expand()
+    GetAttribute()
+    GetAttributeNo()
+    GetAttributeNs()
+    GetParserColumnNumber()
+    GetParserLineNumber()
+    GetParserProp()
+    GetRemainder()
+    HasAttributes()
+    HasValue()
+    IsDefault()
+    IsEmptyElement()
+    IsNamespaceDecl()
+    IsValid()
+    LocalName()
+    LookupNamespace()
+    MoveToAttribute()
+    MoveToAttributeNo()
+    MoveToAttributeNs()
+    MoveToElement()
+    MoveToFirstAttribute()
+    MoveToNextAttribute()
+    Name()
+    NamespaceUri()
+    NewDoc()
+    NewFd()
+    NewFile()
+    NewMemory()
+    NewWalker()
+    Next()
+    NextSibling()
+    NodeType()
+    Normalization()
+    Prefix()
+    Preserve()
+    QuoteChar()
+    Read()
+    ReadAttributeValue()
+    ReadInnerXml()
+    ReadOuterXml()
+    ReadState()
+    ReadString()
+    RelaxNGSetSchema()
+    RelaxNGValidate()
+    RelaxNGValidateCtxt()
+    SchemaValidate()
+    SchemaValidateCtxt()
+    SetParserProp()
+    SetSchema()
+    Setup()
+    Standalone()
+    String()
+    Value()
+    XmlLang()
+    XmlVersion()
+Class URI()
+    # accessors
+    authority()
+    fragment()
+    opaque()
+    path()
+    port()
+    query()
+    queryRaw()
+    scheme()
+    server()
+    setAuthority()
+    setFragment()
+    setOpaque()
+    setPath()
+    setPort()
+    setQuery()
+    setQueryRaw()
+    setScheme()
+    setServer()
+    setUser()
+    user()
+
+    # functions from module uri
+    parseURIReference()
+    printURI()
+    saveUri()
+
+
+Class ValidCtxt(ValidCtxtCore)
+
+    # functions from module valid
+    validCtxtNormalizeAttributeValue()
+    validateDocument()
+    validateDocumentFinal()
+    validateDtd()
+    validateDtdFinal()
+    validateElement()
+    validateNotationUse()
+    validateOneAttribute()
+    validateOneElement()
+    validateOneNamespace()
+    validatePopElement()
+    validatePushCData()
+    validatePushElement()
+    validateRoot()
+Class xpathContext()
+    # accessors
+    contextDoc()
+    contextNode()
+    contextPosition()
+    contextSize()
+    function()
+    functionURI()
+    setContextDoc()
+    setContextNode()
+
+    # functions from module python
+    registerXPathFunction()
+    xpathRegisterVariable()
+
+    # functions from module xpath
+    xpathContextSetCache()
+    xpathEval()
+    xpathEvalExpression()
+    xpathFreeContext()
+
+    # functions from module xpathInternals
+    xpathNewParserContext()
+    xpathNsLookup()
+    xpathRegisterAllFunctions()
+    xpathRegisterNs()
+    xpathRegisteredFuncsCleanup()
+    xpathRegisteredNsCleanup()
+    xpathRegisteredVariablesCleanup()
+    xpathVariableLookup()
+    xpathVariableLookupNS()
+
+    # functions from module xpointer
+    xpointerEval()
 Class xpathParserContext()
     # accessors
     context()
@@ -886,278 +1175,3 @@ Class xpathParserContext()
     # functions from module xpointer
     xpointerEvalRangePredicate()
     xpointerRangeToFunction()
-Class SchemaParserCtxt()
-
-    # functions from module xmlschemas
-    schemaParse()
-
-
-Class ValidCtxt(ValidCtxtCore)
-
-    # functions from module valid
-    validCtxtNormalizeAttributeValue()
-    validateDocument()
-    validateDocumentFinal()
-    validateDtd()
-    validateDtdFinal()
-    validateElement()
-    validateNotationUse()
-    validateOneAttribute()
-    validateOneElement()
-    validateOneNamespace()
-    validatePopElement()
-    validatePushCData()
-    validatePushElement()
-    validateRoot()
-
-
-Class xmlNs(xmlNode)
-
-    # functions from module tree
-    copyNamespace()
-    copyNamespaceList()
-    freeNs()
-    freeNsList()
-    newChild()
-    newDocNode()
-    newDocNodeEatName()
-    newDocRawNode()
-    newNodeEatName()
-    newNsProp()
-    newNsPropEatName()
-    newTextChild()
-    setNs()
-    setNsProp()
-    unsetNsProp()
-
-    # functions from module xpathInternals
-    xpathNodeSetFreeNs()
-Class xmlTextReaderLocator()
-
-    # functions from module xmlreader
-    BaseURI()
-    LineNumber()
-Class URI()
-    # accessors
-    authority()
-    fragment()
-    opaque()
-    path()
-    port()
-    query()
-    queryRaw()
-    scheme()
-    server()
-    setAuthority()
-    setFragment()
-    setOpaque()
-    setPath()
-    setPort()
-    setQuery()
-    setQueryRaw()
-    setScheme()
-    setServer()
-    setUser()
-    user()
-
-    # functions from module uri
-    parseURIReference()
-    printURI()
-    saveUri()
-
-
-Class xmlAttribute(xmlNode)
-Class catalog()
-
-    # functions from module catalog
-    add()
-    catalogIsEmpty()
-    convertSGMLCatalog()
-    dump()
-    remove()
-    resolve()
-    resolvePublic()
-    resolveSystem()
-    resolveURI()
-Class xpathContext()
-    # accessors
-    contextDoc()
-    contextNode()
-    contextPosition()
-    contextSize()
-    function()
-    functionURI()
-    setContextDoc()
-    setContextNode()
-
-    # functions from module python
-    registerXPathFunction()
-
-    # functions from module xpath
-    xpathContextSetCache()
-    xpathEval()
-    xpathEvalExpression()
-    xpathFreeContext()
-
-    # functions from module xpathInternals
-    xpathNewParserContext()
-    xpathNsLookup()
-    xpathRegisterAllFunctions()
-    xpathRegisterNs()
-    xpathRegisteredFuncsCleanup()
-    xpathRegisteredNsCleanup()
-    xpathRegisteredVariablesCleanup()
-    xpathVariableLookup()
-    xpathVariableLookupNS()
-
-    # functions from module xpointer
-    xpointerEval()
-
-
-Class xmlElement(xmlNode)
-
-
-Class xmlTextReader(xmlTextReaderCore)
-
-    # functions from module xmlreader
-    AttributeCount()
-    BaseUri()
-    ByteConsumed()
-    Close()
-    CurrentDoc()
-    CurrentNode()
-    Depth()
-    Encoding()
-    Expand()
-    GetAttribute()
-    GetAttributeNo()
-    GetAttributeNs()
-    GetParserColumnNumber()
-    GetParserLineNumber()
-    GetParserProp()
-    GetRemainder()
-    HasAttributes()
-    HasValue()
-    IsDefault()
-    IsEmptyElement()
-    IsNamespaceDecl()
-    IsValid()
-    LocalName()
-    LookupNamespace()
-    MoveToAttribute()
-    MoveToAttributeNo()
-    MoveToAttributeNs()
-    MoveToElement()
-    MoveToFirstAttribute()
-    MoveToNextAttribute()
-    Name()
-    NamespaceUri()
-    NewDoc()
-    NewFd()
-    NewFile()
-    NewMemory()
-    NewWalker()
-    Next()
-    NextSibling()
-    NodeType()
-    Normalization()
-    Prefix()
-    Preserve()
-    QuoteChar()
-    Read()
-    ReadAttributeValue()
-    ReadInnerXml()
-    ReadOuterXml()
-    ReadState()
-    ReadString()
-    RelaxNGSetSchema()
-    RelaxNGValidate()
-    SchemaValidate()
-    SchemaValidateCtxt()
-    SetParserProp()
-    SetSchema()
-    Setup()
-    Standalone()
-    String()
-    Value()
-    XmlLang()
-    XmlVersion()
-
-
-Class xmlEntity(xmlNode)
-
-    # functions from module parserInternals
-    handleEntity()
-Class Schema()
-
-    # functions from module xmlreader
-    SetSchema()
-
-    # functions from module xmlschemas
-    schemaDump()
-    schemaNewValidCtxt()
-Class Error()
-    # accessors
-    code()
-    domain()
-    file()
-    level()
-    line()
-    message()
-
-    # functions from module xmlerror
-    copyError()
-    resetError()
-Class relaxNgSchema()
-
-    # functions from module relaxng
-    relaxNGDump()
-    relaxNGDumpTree()
-    relaxNGNewValidCtxt()
-
-    # functions from module xmlreader
-    RelaxNGSetSchema()
-
-
-Class inputBuffer(ioReadWrapper)
-
-    # functions from module xmlIO
-    grow()
-    push()
-    read()
-
-    # functions from module xmlreader
-    Setup()
-    newTextReader()
-
-
-Class SchemaValidCtxt(SchemaValidCtxtCore)
-
-    # functions from module xmlreader
-    SchemaValidateCtxt()
-
-    # functions from module xmlschemas
-    schemaIsValid()
-    schemaSetValidOptions()
-    schemaValidCtxtGetOptions()
-    schemaValidateDoc()
-    schemaValidateFile()
-    schemaValidateOneElement()
-
-
-Class outputBuffer(ioWriteWrapper)
-
-    # functions from module HTMLtree
-    htmlDocContentDumpFormatOutput()
-    htmlDocContentDumpOutput()
-    htmlNodeDumpFormatOutput()
-    htmlNodeDumpOutput()
-
-    # functions from module tree
-    nodeDumpOutput()
-    saveFileTo()
-    saveFormatFileTo()
-
-    # functions from module xmlIO
-    write()
-    writeString()

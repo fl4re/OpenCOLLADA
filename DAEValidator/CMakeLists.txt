@@ -79,15 +79,6 @@ add_executable(${name} ${SRC})
 target_link_libraries(${name} ${libDAEValidator_libs})
 
 if (NOT LIBXML2_FOUND)
-	add_definitions(
-		-DLIBXML_AUTOMATA_ENABLED
-        -DLIBXML_HTTP_ENABLED
-		-DLIBXML_PATTERN_ENABLED
-		-DLIBXML_REGEXP_ENABLED
-		-DLIBXML_SCHEMAS_ENABLED
-		-DLIBXML_XPATH_ENABLED
-		-DLIBXML_TREE_ENABLED
-		)
 	if (USE_STATIC)
 		add_dependencies(${name} xml_static)
 	endif ()

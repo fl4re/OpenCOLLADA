@@ -1,15 +1,5 @@
 set(name xml)
 project(${name})
-
-add_definitions(
-		-DLIBXML_AUTOMATA_ENABLED
-        -DLIBXML_HTTP_ENABLED
-		-DLIBXML_PATTERN_ENABLED
-		-DLIBXML_REGEXP_ENABLED
-		-DLIBXML_SCHEMAS_ENABLED
-		-DLIBXML_XPATH_ENABLED
-		-DLIBXML_TREE_ENABLED
-	)
 	
 if(USE_STATIC_MSVC_RUNTIME)
 	foreach(flag CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL
@@ -31,6 +21,7 @@ set(libxml_include_dirs
 set(libxml_include_dirs ${libxml_include_dirs} PARENT_SCOPE)  # adding include dirs to a parent scope
 
 set(SRC
+	buf.c
 	c14n.c
 	catalog.c
 	chvalid.c
@@ -71,6 +62,7 @@ set(SRC
 	xmlunicode.c
 	xmlwriter.c
 	xpath.c
+	xpointer.c
 	tree.c
 )
 
