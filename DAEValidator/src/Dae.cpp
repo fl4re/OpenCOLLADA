@@ -1,7 +1,9 @@
 
 #include "Dae.h"
+#include "PathUtil.h"
 #include "StringUtil.h"
 #include "Strings.h"
+#include <iostream>
 #include <sstream>
 
 using namespace std;
@@ -209,7 +211,7 @@ namespace opencollada
 		}
 
 		// <accessor>/<param type="IDREF">
-		const auto & params = root().selectNodes(xpath_all + Strings::accessor + xpath_child + Strings::param + "[@type=\"IDREF\"]");
+		const auto & params = root().selectNodes(xpath_all + Strings::accessor + xpath_child + Strings::param + "[@type='IDREF']");
 		for (auto param : params)
 		{
 			mIDREFs.emplace_back(param.line(), param.text());
@@ -220,6 +222,43 @@ namespace opencollada
 	{
 		initializeCache();
 		return mIdCache;
+	}
+
+	XmlNode Dae::resolve(const Uri & uri) const
+	{
+		Uri full_uri = uri;
+
+		bool test_path_exists = true;
+		if (uri.path().empty())
+		{
+			full_uri.set(getURI(), uri);
+			test_path_exists = false;
+		}
+
+		if ((!test_path_exists || Path::Exists(uri.nativePath())) && !uri.fragment().empty())
+		{
+			Uri no_fragment_uri(full_uri);
+			no_fragment_uri.setFragment("");
+			if (no_fragment_uri == getURI())
+			{
+				const auto & nodes = root().selectNodes(string("//*[@id='") + uri.fragment() + "']");
+				if (!nodes.empty())
+					return nodes[0];
+			}
+			else
+			{
+				auto it = getExternalDAEs().find(no_fragment_uri);
+				if (it != getExternalDAEs().end())
+				{
+					const Dae & dae = it->second;
+					const auto & nodes = dae.root().selectNodes(string("//*[@id='") + uri.fragment() + "']");
+					if (!nodes.empty())
+						return nodes[0];
+				}
+			}
+		}
+
+		return XmlNode();
 	}
 
 	void Dae::readExternalFile(const string & url)

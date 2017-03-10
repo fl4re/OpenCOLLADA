@@ -15,11 +15,14 @@ namespace opencollada
 	{
 		friend class XmlDoc;
 		friend class XmlNodeSet;
+		friend class ScopedSetDocRoot;
+
 	public:
 		XmlNode() = default;
 		operator bool() const;
 
 		XmlDoc & doc() const;
+		XmlNode parent() const;
 		XmlNode child(const std::string & name) const;
 		XmlNode firstChild() const;
 		std::string text() const;

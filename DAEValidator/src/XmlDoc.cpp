@@ -112,38 +112,21 @@ namespace opencollada
 		return xmlDocGetRootElement(mDoc);
 	}
 
-	XmlDoc::TempRootMod XmlDoc::setTempRoot(const XmlNode & node) const
-	{
-		TempRootMod trm(mDoc->children);
-		mDoc->children = node.mNode;
-		mDoc->last = mDoc->children;
-		return trm;
-	}
-
-	XmlDoc::TempRootMod::TempRootMod(const XmlNode & old_root)
-		: mOldDocChildren(old_root.mNode->doc->children)
-		, mOldDocLast(old_root.mNode->doc->last)
-	{}
-
-	XmlDoc::TempRootMod::TempRootMod(TempRootMod && other)
-	{
-		swap(mOldDocChildren, other.mOldDocChildren);
-		swap(mOldDocLast, other.mOldDocLast);
-	}
-
-	XmlDoc::TempRootMod::~TempRootMod()
-	{
-		// Restore old root
-		if (mOldDocChildren)
-		{
-			const XmlDoc & doc = mOldDocChildren.doc();
-			doc.mDoc->children = mOldDocChildren.mNode;
-			doc.mDoc->last = mOldDocLast.mNode;
-		}
-	}
-
 	XmlDoc & XmlDoc::GetXmlDoc(xmlDocPtr doc)
 	{
 		return *static_cast<XmlDoc*>(doc->_private);
+	}
+
+	ScopedSetDocRoot::ScopedSetDocRoot(const XmlDoc & doc, const XmlNode & node)
+		: mDocOldChildren(doc.mDoc->children)
+		, mDocOldLast(doc.mDoc->last)
+	{
+		doc.mDoc->children = doc.mDoc->last = node.mNode;
+	}
+
+	ScopedSetDocRoot::~ScopedSetDocRoot()
+	{
+		mDocOldChildren.mNode->doc->children = mDocOldChildren.mNode;
+		mDocOldChildren.mNode->doc->last = mDocOldLast.mNode;
 	}
 }

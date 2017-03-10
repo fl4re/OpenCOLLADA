@@ -19,9 +19,15 @@ namespace opencollada
 	const char* checkUniqueIds = "--check-unique-ids";
 	const char* checkUniqueSids = "--check-unique-sids";
 	const char* checkLinks = "--check-links";
+	const char* checkReferencedJointController = "--check-joint-controller";
+	const char* checkCompleteBindPose = "--check-complete-bindpose";
+	const char* checkReferencedJointsBySkinController = "--check-referenced-joints-by-skin-controller";
+	const char* checkLOD = "--check-lod";
 	const char* recursive = "--recursive";
 	const char* quiet = "--quiet";
 	const char* help = "--help";
+
+	const size_t flag_checkOption = 0x01;
 
 	const char* colladaNamespace141 = "http://www.collada.org/2005/11/COLLADASchema";
 	const char* colladaSchemaFileName141 = "collada_schema_1_4_1.xsd";
@@ -38,12 +44,17 @@ int main(int argc, char* argv[])
 
 	// Parse arguments
 	ArgumentParser argparse(argc, argv);
+
 	argparse.addArgument().hint("path").help("Path to COLLADA document or directory to parse. If 'path' is a directory it is parsed for files with .DAE extension.");
-	argparse.addArgument(checkSchemaAuto).help("Regular XML schema validation.");
-	argparse.addArgument(checkSchema).numParameters(1).hint(0, "schema_path").help("Validate against arbitrary XML schema.");
-	argparse.addArgument(checkUniqueIds).help("Check that ids in documents are unique.");
-	argparse.addArgument(checkUniqueSids).help("Check that sids in documents are unique in their scope.");
-	argparse.addArgument(checkLinks).help("Check that URIs refer to valid files and/or elements.");
+	argparse.addArgument(checkSchemaAuto).flags(flag_checkOption).help("Regular XML schema validation.");
+	argparse.addArgument(checkSchema).flags(flag_checkOption).numParameters(1).hint(0, "schema_path").help("Validate against arbitrary XML schema.");
+	argparse.addArgument(checkUniqueIds).flags(flag_checkOption).help("Check that ids in documents are unique.");
+	argparse.addArgument(checkUniqueSids).flags(flag_checkOption).help("Check that sids in documents are unique in their scope.");
+	argparse.addArgument(checkLinks).flags(flag_checkOption).help("Check that URIs refer to valid files and/or elements.");
+	argparse.addArgument(checkReferencedJointController).flags(flag_checkOption).help("Check if all joints in the Name_array of each skin controller are referenced in the DAE.");
+	argparse.addArgument(checkCompleteBindPose).flags(flag_checkOption).help("Check if we have a complete bind pose.");
+	argparse.addArgument(checkReferencedJointsBySkinController).flags(flag_checkOption).help("Check if all joints referenced by the skin controller are accessible via the defined skeleton roots.");
+	argparse.addArgument(checkLOD).flags(flag_checkOption).help("Check LOD.");
 	argparse.addArgument(recursive).help("Recursively parse directories. Ignored if 'path' is not a directory.");
 	argparse.addArgument(quiet).help("If set, no output is sent to standard out/err.");
 	argparse.addArgument(help).help("Display help.");
@@ -56,7 +67,7 @@ int main(int argc, char* argv[])
 	}
 
 	if (!argparse_ok) {
-		cerr << argparse.getParseError() << endl;
+		cout << argparse.getParseError() << endl;
 		cout << argparse.usage() << endl;
 		return 1;
 	}
@@ -68,7 +79,7 @@ int main(int argc, char* argv[])
 	colladaSchema141.readFile(Path::Join(Path::GetExecutableDirectory(), colladaSchemaFileName141));
 	if (!colladaSchema141)
 	{
-		cerr << "Error loading " << Path::Join(Path::GetExecutableDirectory(), colladaSchemaFileName141) << endl;
+		cout << "Error loading " << Path::Join(Path::GetExecutableDirectory(), colladaSchemaFileName141) << endl;
 		return 1;
 	}
 
@@ -76,7 +87,7 @@ int main(int argc, char* argv[])
 	//colladaSchema15.readFile(Path::Join(GetExecutableDirectory(), colladaSchemaFileName15));
 	//if (!colladaSchema15)
 	//{
-	//	cerr << "Error loading " << Path::Join(GetExecutableDirectory(), colladaSchemaFileName15) << endl;
+	//	cout << "Error loading " << Path::Join(GetExecutableDirectory(), colladaSchemaFileName15) << endl;
 	//	return 1;
 	//}
 
@@ -102,11 +113,7 @@ int main(int argc, char* argv[])
 	DaeValidator validator(daePaths);
 	int result = 0;
 
-	if (!argparse.findArgument(checkSchemaAuto) &&
-		!argparse.findArgument(checkUniqueIds) &&
-		!argparse.findArgument(checkUniqueSids) &&
-		!argparse.findArgument(checkSchema) &&
-		!argparse.findArgument(checkLinks))
+	if (!argparse.hasSetArgument(flag_checkOption))
 	{
 		result |= validator.checkAll();
 	}
@@ -124,6 +131,18 @@ int main(int argc, char* argv[])
 		if (argparse.findArgument(checkLinks))
 			result |= validator.checkLinks();
 
+		if (argparse.findArgument(checkReferencedJointController))
+			result |= validator.checkReferencedJointController();
+
+		if (argparse.findArgument(checkReferencedJointsBySkinController))
+			result |= validator.checkReferencedJointsBySkinController();
+
+		if (argparse.findArgument(checkCompleteBindPose))
+			result |= validator.checkCompleteBindPose();
+
+		if (argparse.findArgument(checkLOD))
+			result |= validator.checkLOD();
+
 		if (const auto & arg = argparse.findArgument(checkSchema))
 			result |= validator.checkSchema(arg.getValue<string>());
 	}
@@ -136,7 +155,7 @@ int main(int argc, char* argv[])
 	if (result == 0)
 		cout << "Validation SUCCEEDED." << endl;
 	else
-		cerr << "Validation FAILED." << endl;
+		cout << "Validation FAILED." << endl;
 
 	return result;
 }

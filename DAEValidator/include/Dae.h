@@ -27,6 +27,7 @@ namespace opencollada
 		const std::vector<std::tuple<size_t, Uri>> & getAnyURIs() const { return mAnyURIs; }
 		const std::vector<std::tuple<size_t, std::string>> & getIDREFs() const { return mIDREFs; }
 		const std::set<std::string> & getIds() const;
+		XmlNode resolve(const Uri & uri) const;
 
 	private:
 		void readExternalFile(const std::string & path);

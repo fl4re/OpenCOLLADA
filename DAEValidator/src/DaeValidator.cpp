@@ -99,7 +99,7 @@ namespace opencollada
 			else
 			{
 				result |= 1;
-				cerr << "Error loading " << daePath << endl;
+				cout << "Error loading " << daePath << endl;
 			}
 		}
 		return result;
@@ -118,7 +118,9 @@ namespace opencollada
 			checkSchema(dae) |
 			checkUniqueIds(dae) |
 			checkUniqueSids(dae) |
-			checkLinks(dae);
+			checkLinks(dae) |
+			checkSkinController(dae) |
+			checkLOD(dae);
 	}
 
 	int DaeValidator::checkSchema(const string & schema_uri) const
@@ -139,7 +141,7 @@ namespace opencollada
 			});
 		}
 
-		cerr << "Error loading " << schema_uri << endl;
+		cout << "Error loading " << schema_uri << endl;
 		return 1;
 	}
 
@@ -153,13 +155,13 @@ namespace opencollada
 		auto collada = dae.root();
 		if (!collada)
 		{
-			cerr << "Can't find document root" << endl;
+			cout << "Can't find document root" << endl;
 			return 1;
 		}
 
 		if (collada.name() != Strings::COLLADA)
 		{
-			cerr << "Root element is not <" << Strings::COLLADA << ">" << endl;
+			cout << "Root element is not <" << Strings::COLLADA << ">" << endl;
 			return 1;
 		}
 
@@ -167,7 +169,7 @@ namespace opencollada
 		auto xmlns = collada.ns();
 		if (!xmlns)
 		{
-			cerr << "COLLADA element has no namespace" << endl;
+			cout << "COLLADA element has no namespace" << endl;
 			return 1;
 		}
 
@@ -180,12 +182,12 @@ namespace opencollada
 		else if (href == colladaNamespace15)
 		{
 			//result |= ValidateAgainstSchema(dae, colladaSchema15);
-			cerr << "COLLADA 1.5 not supported yet." << endl;
+			cout << "COLLADA 1.5 not supported yet." << endl;
 			return 1;
 		}
 		else
 		{
-			cerr << "Can't determine COLLADA version used by input file" << endl;
+			cout << "Can't determine COLLADA version used by input file" << endl;
 			return 1;
 		}
 
@@ -261,7 +263,7 @@ namespace opencollada
 			}
 			else if (!schema)
 			{
-				cerr << "Error loading " << schemaUri << endl;
+				cout << "Error loading " << schemaUri << endl;
 				result |= 1;
 			}
 		}
@@ -279,7 +281,7 @@ namespace opencollada
 			const auto & nodes = dae.root().selectNodes(xpath.str());
 			for (auto node : nodes)
 			{
-				auto autoRestoreRoot = dae.setTempRoot(node);
+				ScopedSetDocRoot temp_set_doc_root(dae, node);
 				result |= ValidateAgainstSchema(dae, schema.second);
 			}
 		}
@@ -309,14 +311,14 @@ namespace opencollada
 			int checkEscapeCharResult = CheckEscapeChar(id);
 			if (checkEscapeCharResult != 0)
 			{
-				cerr << dae.getURI() << ":" << line << ": \"" << id << "\" contains non-escaped characters." << endl;
+				cout << dae.getURI() << ":" << line << ": \"" << id << "\" contains non-escaped characters." << endl;
 				result |= checkEscapeCharResult;
 			}
 
 			auto it = ids.find(id);
 			if (it != ids.end())
 			{
-				cerr << dae.getURI() << ":" << line << ": Duplicated id \"" << id << "\". See first declaration at line " << it->second << "." << endl;
+				cout << dae.getURI() << ":" << line << ": Duplicated id \"" << id << "\". See first declaration at line " << it->second << "." << endl;
 				result |= 1;
 			}
 			else
@@ -352,7 +354,7 @@ namespace opencollada
 				auto it = sids.find(sid);
 				if (it != sids.end())
 				{
-					cerr << dae.getURI() << ":" << line << ": Duplicated sid \"" << sid << "\". See first declaration at line " << it->second << "." << endl;
+					cout << dae.getURI() << ":" << line << ": Duplicated sid \"" << sid << "\". See first declaration at line " << it->second << "." << endl;
 					result |= 1;
 				}
 				else
@@ -361,6 +363,312 @@ namespace opencollada
 				}
 			}
 		}
+		return result;
+	}
+
+	int DaeValidator::checkReferencedJointController() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkReferencedJointController(dae);
+		});
+	}
+
+	int DaeValidator::checkReferencedJointController(const Dae & dae) const
+	{
+		cout << "Checking controller joints..." << endl;
+
+		int result = 0;
+
+		const auto & joint_sid_arrays = dae.root().selectNodes("//collada:library_controllers/collada:controller/collada:skin/collada:source/collada:Name_array");
+		const auto & joints = dae.root().selectNodes("//collada:node[@type='JOINT']");
+
+		for (const auto & joint_sid_array : joint_sid_arrays)
+		{
+			auto source = joint_sid_array.parent();
+			auto skin = source.parent();
+			auto controller = skin.parent();
+
+			vector<string> joint_sids = String::Split(joint_sid_array.text());
+
+			for (const auto & joint_sid : joint_sids)
+			{
+				bool found = false;
+				for (const auto & joint : joints)
+				{
+					if (auto sid = joint.attribute("sid"))
+					{
+						if (sid.value() == joint_sid)
+						{
+							found = true;
+							break;
+						}
+					}
+				}
+
+				if (!found)
+				{
+					string joint_sid_array_id = joint_sid_array.attribute("id").value();
+					cout << dae.getURI() << ":" << joint_sid_array.line() << ": no JOINT with sid=\"" << joint_sid << "\" found in document." << endl;
+					result |= 1;
+				}
+			}
+		}
+
+		return result;
+	}
+
+	int DaeValidator::checkReferencedJointsBySkinController() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkReferencedJointsBySkinController(dae);
+		});
+	}
+
+	int DaeValidator::checkReferencedJointsBySkinController(const Dae & dae) const
+	{
+		cout << "Checking controller skin joints..." << endl;
+
+		int result = 0;
+
+		const auto & instance_controllers = dae.root().selectNodes("//collada:instance_controller");
+
+		for (const auto & instance_controller : instance_controllers)
+		{
+			const auto & skeletons = instance_controller.selectNodes("collada:skeleton");
+			if (!skeletons.empty())
+			{
+				Uri controller_url = instance_controller.attribute("url").value();
+				if (auto controller = dae.resolve(controller_url))
+				{
+					if (auto skin = controller.child("skin"))
+					{
+						if (auto source = skin.child("source"))
+						{
+							if (auto name_array = source.child("Name_array"))
+							{
+								vector<string> sids = String::Split(name_array.text());
+								for (const auto & sid : sids)
+								{
+									bool found = false;
+									for (const auto & skeleton : skeletons)
+									{
+										Uri root_uri = skeleton.text();
+										if (auto root = dae.resolve(root_uri))
+										{
+											const auto & joint = root.selectNodes(string("descendant-or-self::collada:node[@sid='") + sid + "']");
+											if (!joint.empty())
+											{
+												found = true;
+												break;
+											}
+										}
+									}
+
+									if (!found)
+									{
+										cout << dae.getURI() << ':' << name_array.line() << ": cannot find a JOINT with sid=\"" << sid << "\" under any skeleton root of instance_controller at line " << instance_controller.line() << endl;
+										result |= 1;
+									}
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					cout << dae.getURI() << ':' << instance_controller.line() << ": can't resolve " << controller_url << endl;
+					result |= 1;
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/** Check if we have a complete bind pose. */
+	int DaeValidator::checkCompleteBindPose() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkCompleteBindPose(dae);
+		});
+	}
+
+	int DaeValidator::checkCompleteBindPose(const Dae & dae) const
+	{
+		cout << "Checking complete bind pose..." << endl;
+		
+		int result = 0;
+
+		// TODO This does not work. Check with Franck...
+
+		const auto & sourceSkinNodes = dae.root().selectNodes("//collada:library_controllers/collada:controller/collada:skin/collada:source/collada:Name_array");
+
+		for (const auto& sourceSkinNode : sourceSkinNodes)
+		{
+			string skin = sourceSkinNode.text();
+			string arrayId = sourceSkinNode.attribute("id").value();
+
+			vector<string> skinNodes = String::Split(skin);
+			
+			for (const auto& skinNode : skinNodes)
+			{
+				bool found = false;
+
+				// search parent's node
+				string research = "//collada:node[@name=" + string("'") + skinNode + "'" + "]" + "/parent::collada:node";
+				const auto & nodes1 = dae.root().selectNodes(research);
+				for (const auto& node : nodes1)
+				{
+					string parentName = node.attribute("name").value();
+
+					// search if it is in the skinNodes
+					for (const auto& skinNode1 : skinNodes)
+					{
+						if (!parentName.compare(skinNode1))
+							found = true;
+					}
+				}
+				
+				if (!found)
+				{
+					bool found1 = true;
+
+					// check if skinNode is the local root (all other node are children)
+					for (const auto& skinNode1 : skinNodes)
+					{
+						if (skinNode.compare(skinNode1))
+						{
+							research = "//collada:node[@name=" + string("'") + skinNode + "'" + "]" + "//collada:node[@name=" + string("'") + skinNode1 + "'" + "]";
+							const auto & nodes2 = dae.root().selectNodes(research);
+
+							if (nodes2.empty())
+							{
+								found1 = false;
+								result |= 1;
+								break;
+							}
+						}
+					}
+
+					if (!found1)
+					{
+						arrayId = arrayId.substr(0, arrayId.substr(0, arrayId.find_last_of('-')).find_last_of('-'));
+						cout << "checkCompleteBindPose -- Error in " << arrayId << " controller, " << skinNode << " has no parent defined" << endl;
+					}
+						
+				}
+			}
+		}
+
+		return result;
+	}
+
+	int DaeValidator::checkSkinController() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkSkinController(dae);
+		});
+	}
+
+
+	int DaeValidator::checkSkinController(const Dae & dae) const
+	{
+		int result = 0;
+
+		result |= DaeValidator::checkReferencedJointController(dae);
+		result |= DaeValidator::checkReferencedJointsBySkinController(dae);
+		result |= DaeValidator::checkCompleteBindPose(dae);
+
+		return result;
+	}
+
+	int DaeValidator::checkLOD() const
+	{
+		return for_each_dae([&](const Dae & dae) {
+			return checkLOD(dae);
+		});
+	}
+
+	static int recursiveSearchLOD(const Dae & dae, string LODUrl)
+	{
+		int result = 0;
+
+		string research = "//collada:library_nodes//" + string("collada:node[@id=") + string("'") + LODUrl + "'" + "]";
+		const auto & resultnodes = dae.root().selectNodes(research);
+
+		if (!resultnodes.size())
+		{
+			cout << "checkLOD -- Error: " << LODUrl << " doesn't exist in library_nodes" << endl;
+			result |= 1;
+		}
+
+		for (const auto& resultnode : resultnodes)
+		{
+			string nodeName = resultnode.attribute("name").value();
+				
+			// search for recursive LOD
+			string researchproxy = "//collada:node[@id=" + string("'") + LODUrl + "'" + "]" + string("//lod:proxy");
+
+			const auto & sourceLODs = dae.root().selectNodes(researchproxy);
+			for (const auto& sourceLOD : sourceLODs)
+			{
+				string url = sourceLOD.attribute("url").value();
+				size_t posLODUrln = url.find_last_of('#');
+				url = url.substr(posLODUrln + 1);
+
+				result |= recursiveSearchLOD(dae, url);
+			}
+				
+			// search for instance node
+			string researchInstanceNode = "//collada:node[@id=" + string("'") + LODUrl + "'" + "]" + string("//collada:instance_node");
+			const auto & SourceInstanceNode = dae.root().selectNodes(researchInstanceNode);
+			
+			// search for instance_geometry
+			string researchInstanceGeometry = "//collada:node[@id=" + string("'") + LODUrl + "'" + "]" + string("//collada:instance_geometry");
+			const auto & SourceInstanceGeometry = dae.root().selectNodes(researchInstanceGeometry);
+
+			if (!SourceInstanceGeometry.size() && !SourceInstanceNode.size())
+			{
+				result |= 1;
+				cout << "checkLOD -- Error: No instance_geometry Or No instance_node in " << LODUrl << " node" << endl;
+			}
+		}
+
+		return result;
+	}
+
+	int DaeValidator::checkLOD(const Dae & dae) const
+	{
+		int result = 0;
+
+		const auto & sourceLOD = dae.root().selectNodes("//collada:library_visual_scenes//lod:proxy");
+		for (const auto& source : sourceLOD)
+		{
+			string LODUrl = source.attribute("url").value();
+			size_t posLODUrln = LODUrl.find_last_of('#');
+			string LODUrl1 = LODUrl.substr(posLODUrln + 1);
+
+			result |= recursiveSearchLOD(dae, LODUrl1);
+
+			// search for instance node
+			string research = "//lod:proxy[@url=" + string("'") + LODUrl + "'" + "]" +"/ancestor::collada:instance_node";
+			
+			const auto & resultInstanceNodes = dae.root().selectNodes(research);
+
+			if (!resultInstanceNodes.size())
+			{
+				result |= 1;
+
+				research = "//lod:proxy[@url=" + string("'") + LODUrl + "'" + "]" + "/ancestor::collada:node";
+				const auto & resultNodes = dae.root().selectNodes(research);
+				for (const auto& node : resultNodes)
+				{
+					string NodeId = node.attribute("id").value();
+					cout << "checkLOD -- Error: No instance_node in " << NodeId << " node" << endl;
+				}
+			}
+		}
+
 		return result;
 	}
 
@@ -384,7 +692,7 @@ namespace opencollada
 			const auto & uri = get<1>(t);
 			if (!Path::Exists(uri.nativePath()))
 			{
-				cerr << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
+				cout << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
 				result |= 1;
 			}
 			else if (!uri.fragment().empty())
@@ -396,7 +704,7 @@ namespace opencollada
 					auto id = ids.find(uri.fragment());
 					if (id == ids.end())
 					{
-						cerr << dae.getURI() << ":" << line << ": Can't resolve #" << uri.fragment() << endl;
+						cout << dae.getURI() << ":" << line << ": Can't resolve #" << uri.fragment() << endl;
 						result |= 1;
 					}
 				}
@@ -409,13 +717,13 @@ namespace opencollada
 						auto id = ext_ids.find(uri.fragment());
 						if (id == ext_ids.end())
 						{
-							cerr << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
+							cout << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
 							result |= 1;
 						}
 					}
 					else
 					{
-						cerr << dae.getURI() << ":" << line << ": " << uri << ": referenced file exists but has not been successfully loaded." << endl;
+						cout << dae.getURI() << ":" << line << ": " << uri << ": referenced file exists but has not been successfully loaded." << endl;
 						result |= 1;
 					}
 				}
@@ -431,7 +739,7 @@ namespace opencollada
 			auto id = ids.find(idref);
 			if (id == ids.end())
 			{
-				cerr << dae.getURI() << ":" << line << ": Can't resolve #" << idref << endl;
+				cout << dae.getURI() << ":" << line << ": Can't resolve #" << idref << endl;
 				result |= 1;
 			}
 		}
@@ -444,7 +752,7 @@ namespace opencollada
 		return schema.validate(dae) ? 0 : 1;
 	}
 
-	int DaeValidator::CheckEscapeChar(const std::string & s)
+	int DaeValidator::CheckEscapeChar(const string & s)
 	{
 		if (s.find_first_of(" #$%&/:;<=>?@[\\:]^`{|}~") != string::npos)
 			return 1;

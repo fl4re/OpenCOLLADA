@@ -26,6 +26,13 @@ namespace opencollada
 		return XmlDoc::GetXmlDoc(mNode->doc);
 	}
 
+	XmlNode XmlNode::parent() const
+	{
+		if (mNode)
+			return XmlNode(mNode->parent);
+		return XmlNode();
+	}
+
 	XmlNode XmlNode::child(const string & name) const
 	{
 		for (xmlNodePtr node = mNode->children; node; node = node->next)
@@ -88,6 +95,7 @@ namespace opencollada
 		if (xmlXPathContextPtr context = xmlXPathNewContext(mNode->doc))
 		{
 			xmlXPathRegisterNs(context, BAD_CAST "collada", BAD_CAST "http://www.collada.org/2005/11/COLLADASchema");
+			xmlXPathRegisterNs(context, BAD_CAST "lod", BAD_CAST "http://www.collada.org/2016/08/COLLADALODSchema");
 			xmlXPathRegisterNs(context, BAD_CAST "xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
 
 			context->node = mNode;

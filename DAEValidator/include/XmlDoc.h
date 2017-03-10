@@ -17,6 +17,7 @@ namespace opencollada
 	{
 		friend class XmlSchema;
 		friend class XmlNode;
+		friend class ScopedSetDocRoot;
 
 	public:
 		XmlDoc() = default;
@@ -31,26 +32,6 @@ namespace opencollada
 		void reset();
 		XmlNode root() const;
 
-		class TempRootMod
-		{
-		public:
-			TempRootMod(const XmlNode & old_root);
-			TempRootMod(TempRootMod && other);
-			~TempRootMod();
-
-		private:
-			TempRootMod(const TempRootMod&) = delete;
-			const TempRootMod & operator = (const TempRootMod&) = delete;
-
-		private:
-			XmlNode mOldDocChildren;
-			XmlNode mOldDocLast;
-		};
-
-		// Temporarily changes document's root node.
-		// Original root is restored when TempRootMod object is destroyed.
-		TempRootMod setTempRoot(const XmlNode & node) const;
-
 	private:
 		XmlDoc(const XmlDoc&) = delete;
 		const XmlDoc& operator = (const XmlDoc & other) = delete;
@@ -61,5 +42,20 @@ namespace opencollada
 		xmlDocPtr mDoc = nullptr;
 
 		XPathCache mXPathCache;
+	};
+
+	// Temporary change document root node. Original root node is restored when object is destroyed.
+	// Used to validate some portion of the document.
+	// /!\ New root node keeps links to its parent, next and previous nodes!
+	// So don't use XPath queries while root is changed. /!\.
+	class ScopedSetDocRoot
+	{
+	public:
+		ScopedSetDocRoot(const XmlDoc & doc, const XmlNode & node);
+		~ScopedSetDocRoot();
+
+	private:
+		XmlNode mDocOldChildren;
+		XmlNode mDocOldLast;
 	};
 }
