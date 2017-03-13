@@ -499,63 +499,58 @@ namespace opencollada
 		
 		int result = 0;
 
-		// TODO This does not work. Check with Franck...
+		const auto & instance_controllers = dae.root().selectNodes("//collada:instance_controller");
 
-		const auto & sourceSkinNodes = dae.root().selectNodes("//collada:library_controllers/collada:controller/collada:skin/collada:source/collada:Name_array");
-
-		for (const auto& sourceSkinNode : sourceSkinNodes)
+		for (auto instance_controller : instance_controllers)
 		{
-			string skin = sourceSkinNode.text();
-			string arrayId = sourceSkinNode.attribute("id").value();
-
-			vector<string> skinNodes = String::Split(skin);
-			
-			for (const auto& skinNode : skinNodes)
+			if (auto url = instance_controller.attribute("url"))
 			{
-				bool found = false;
-
-				// search parent's node
-				string research = "//collada:node[@name=" + string("'") + skinNode + "'" + "]" + "/parent::collada:node";
-				const auto & nodes1 = dae.root().selectNodes(research);
-				for (const auto& node : nodes1)
+				if (auto controller = dae.resolve(url.value()))
 				{
-					string parentName = node.attribute("name").value();
-
-					// search if it is in the skinNodes
-					for (const auto& skinNode1 : skinNodes)
+					if (auto skin = controller.child("skin"))
 					{
-						if (!parentName.compare(skinNode1))
-							found = true;
-					}
-				}
-				
-				if (!found)
-				{
-					bool found1 = true;
-
-					// check if skinNode is the local root (all other node are children)
-					for (const auto& skinNode1 : skinNodes)
-					{
-						if (skinNode.compare(skinNode1))
+						if (auto source = skin.child("source"))
 						{
-							research = "//collada:node[@name=" + string("'") + skinNode + "'" + "]" + "//collada:node[@name=" + string("'") + skinNode1 + "'" + "]";
-							const auto & nodes2 = dae.root().selectNodes(research);
-
-							if (nodes2.empty())
+							if (auto name_array = source.child("Name_array"))
 							{
-								found1 = false;
-								result |= 1;
-								break;
+								vector<string> sids = String::Split(name_array.text());
+								const auto & skeletons = instance_controller.selectNodes("collada:skeleton");
+								// Check that children of each skeleton root are in controller
+								for (auto skeleton : skeletons)
+								{
+									if (auto root_node = dae.resolve(skeleton.text()))
+									{
+										const auto & children = root_node.selectNodes("collada:node");
+										for (auto child : children)
+										{
+											if (auto sid = child.attribute("sid"))
+											{
+												if (find(sids.begin(), sids.end(), sid.value()) == sids.end())
+												{
+													cout << dae.getURI() << ':' << child.line() << ": node not found in controller " << url.value() << endl;
+													result |= 1;
+												}
+											}
+											else
+											{
+												// Node has no sid. Check if it has children in the controller. If yes, there is a problem.
+												// We need all bind poses in the hierarchy or local bind poses cannot be computed.
+												const auto & children_with_sid = child.selectNodes("collada:node[@sid]");
+												for (auto child_with_sid : children_with_sid)
+												{
+													if (find(sids.begin(), sids.end(), child_with_sid.attribute("sid").value()) != sids.end())
+													{
+														cout << dae.getURI() << ':' << skeleton.line() << ": child node " << child.attribute("id").value() << " is not in controller " << url.value() << ". It is required to compute local bind pose of its children" << endl;
+														result |= 1;
+													}
+												}
+											}
+										}
+									}
+								}
 							}
 						}
 					}
-
-					if (!found1)
-					{
-						arrayId = arrayId.substr(0, arrayId.substr(0, arrayId.find_last_of('-')).find_last_of('-'));
-						cout << "checkCompleteBindPose -- Error in " << arrayId << " controller, " << skinNode << " has no parent defined" << endl;
-					}
-						
 				}
 			}
 		}
