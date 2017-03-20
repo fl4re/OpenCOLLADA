@@ -9,4 +9,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-std::string data_path(const std::string & relative_path = std::string());
+namespace opencollada_test
+{
+	std::string data_path(const std::string & relative_path = std::string());
+}

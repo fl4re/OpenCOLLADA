@@ -125,6 +125,8 @@ if (WIN32)
 		tests/src/Common.cpp
 		tests/src/DaeTests.cpp
 		tests/src/PathUtilTests.cpp
+		tests/src/StringUtilTests.cpp
+		tests/src/UriTests.cpp
 
 		tests/include/Common.h
 	)

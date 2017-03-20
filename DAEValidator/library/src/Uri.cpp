@@ -173,7 +173,7 @@ namespace opencollada
 		{
 			if (!ref.mAuthority.empty())
 			{
-				//mAuthority = uri.mAuthority;
+				mAuthority = ref.mAuthority;
 				mPath = Path::RemoveDotSegments(ref.mPath);
 				mQuery = ref.mQuery;
 			}
@@ -377,6 +377,7 @@ namespace opencollada
 			mUri += '?' + mQuery;
 		if (!mFragment.empty())
 			mUri += '#' + mFragment;
+		mValid = true;
 	}
 }
 

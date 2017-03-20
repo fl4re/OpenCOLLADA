@@ -27,13 +27,9 @@ namespace opencollada
         
         virtual const char* what() const NOEXCEPT override
         {
-            stringstream ss;
-            ss << "Missing argument";
-            if (mParam.length() > 0)
-            {
-                ss << ": " << mParam;
-            }
-			mWhat = ss.str();
+			mWhat = "Missing argument";
+			if (mParam.length() > 0)
+				mWhat += ": " + mParam;
             return mWhat.c_str();
         }
         
@@ -54,9 +50,7 @@ namespace opencollada
         
         virtual const char* what() const NOEXCEPT override
         {
-            stringstream ss;
-            ss << "Missing parameter for argument " << mParam;
-			mWhat = ss.str();
+			mWhat = "Missing parameter for argument " + mParam;
             return mWhat.c_str();
         }
         
@@ -77,9 +71,7 @@ namespace opencollada
         
         virtual const char* what() const NOEXCEPT override
         {
-            stringstream ss;
-            ss << "Unknown argument: " << mParam;
-			mWhat = ss.str();
+			mWhat = "Unknown argument: " + mParam;
             return mWhat.c_str();
         }
         
@@ -136,17 +128,17 @@ namespace opencollada
 		return mRequired;
 	}
 
-	string Argument::getHint() const
+	const string & Argument::getHint() const
 	{
 		return mHint;
 	}
 
-	string Argument::getHint(size_t index) const
+	const string & Argument::getHint(size_t index) const
 	{
 		return mHints[index];
 	}
 
-	string Argument::getHelp() const
+	const string & Argument::getHelp() const
 	{
 		return mHelp;
 	}
@@ -303,12 +295,7 @@ namespace opencollada
 
 		for (const auto & arg : mNoSwitchArguments)
 		{
-			s << " ";
-			if (!arg.isRequired())
-				s << '[';
-			s << arg.getHint();
-			if (!arg.isRequired())
-				s << ']';
+			s << " " << arg.getHint();
 		}
 
 		for (const auto & arg : mArguments)

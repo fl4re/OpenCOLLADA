@@ -4,19 +4,19 @@
 using namespace opencollada;
 using namespace std;
 
-namespace dae_tests
+namespace opencollada_test
 {
 	TEST_CLASS(DaeTest)
 	{
 	public:
-		TEST_METHOD(DefaultConstructorTest)
+		TEST_METHOD(DefaultConstructor)
 		{
 			Dae dae;
 		}
 
 		// TODO check external dae!!!
 
-		TEST_METHOD(MoveConstructorTest)
+		TEST_METHOD(MoveConstructor)
 		{
 			Dae src_dae;
 			src_dae.readFile(data_path("dae/MoveConstructorTest.dae"));
@@ -27,7 +27,7 @@ namespace dae_tests
 			Assert::IsTrue(dst_dae);
 		}
 
-		TEST_METHOD(EqualOperatorTest)
+		TEST_METHOD(EqualOperator)
 		{
 			Dae src_dae;
 			src_dae.readFile(data_path("dae/MoveConstructorTest.dae"));
@@ -39,7 +39,7 @@ namespace dae_tests
 			Assert::IsTrue(dst_dae);
 		}
 
-		TEST_METHOD(ReadFileTest)
+		TEST_METHOD(ReadFile)
 		{
 			Dae src_dae;
 			src_dae.readFile(data_path("dae/MoveConstructorTest.dae"));

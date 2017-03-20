@@ -4,19 +4,19 @@
 using namespace opencollada;
 using namespace std;
 
-namespace argument_parser_tests
+namespace opencollada_test
 {
 	TEST_CLASS(ArgumentParserTest)
 	{
 	public:
-		TEST_METHOD(ConstructorTest0)
+		TEST_METHOD(Constructor0)
 		{
 			char** argv = nullptr;
 			int argc = 0;
 			ArgumentParser argparse(argc, argv);
 		}
 
-		TEST_METHOD(ConstructorTest1)
+		TEST_METHOD(Constructor1)
 		{
 			char* argv[] = {
 				"arg0"
@@ -25,7 +25,7 @@ namespace argument_parser_tests
 			ArgumentParser argparse(argc, argv);
 		}
 
-		TEST_METHOD(ConstructorTest10)
+		TEST_METHOD(Constructor10)
 		{
 			char* argv[] = {
 				"arg0",
@@ -43,7 +43,7 @@ namespace argument_parser_tests
 			ArgumentParser argparse(argc, argv);
 		}
 
-		TEST_METHOD(ParseArgumentTest)
+		TEST_METHOD(ParseArgument)
 		{
 			char* argv[] = {
 				"exe",
@@ -61,7 +61,7 @@ namespace argument_parser_tests
 			Assert::IsTrue(argparse.parseArguments());
 		}
 
-		TEST_METHOD(ParseArgumentTest_UnknownArgument)
+		TEST_METHOD(ParseArgumentUnknownArgument)
 		{
 			char* argv[] = {
 				"exe",
@@ -74,7 +74,7 @@ namespace argument_parser_tests
 			Assert::AreEqual("Unknown argument: arg0", argparse.getParseError().c_str());
 		}
 
-		TEST_METHOD(ParseArgumentTest_MissingArgumentParameter)
+		TEST_METHOD(ParseArgumentMissingArgumentParameter)
 		{
 			char* argv[] = {
 				"exe",
@@ -87,7 +87,7 @@ namespace argument_parser_tests
 			Assert::AreEqual("Missing parameter for argument switch0", argparse.getParseError().c_str());
 		}
 
-		TEST_METHOD(ParseArgumentTest_MissingArgument)
+		TEST_METHOD(ParseArgumentMissingArgument)
 		{
 			char* argv[] = {
 				"exe",
@@ -99,7 +99,7 @@ namespace argument_parser_tests
 			Assert::AreEqual("Missing argument: switch0", argparse.getParseError().c_str());
 		}
 
-		TEST_METHOD(ParseArgumentTest_MissingNoSwitchArgumentNoHint)
+		TEST_METHOD(ParseArgumentMissingNoSwitchArgumentNoHint)
 		{
 			char* argv[] = {
 				"exe",
@@ -111,7 +111,7 @@ namespace argument_parser_tests
 			Assert::AreEqual("Missing argument", argparse.getParseError().c_str());
 		}
 
-		TEST_METHOD(ParseArgumentTest_MissingNoSwitchArgument)
+		TEST_METHOD(ParseArgumentMissingNoSwitchArgument)
 		{
 			char* argv[] = {
 				"exe",
@@ -123,7 +123,7 @@ namespace argument_parser_tests
 			Assert::AreEqual("Missing argument: arg", argparse.getParseError().c_str());
 		}
 
-		TEST_METHOD(GetParseErrorTest_WithoutError)
+		TEST_METHOD(GetParseErrorWithoutError)
 		{
 			char* argv[] = {
 				"exe",
@@ -134,7 +134,7 @@ namespace argument_parser_tests
 			Assert::AreEqual("", argparse.getParseError().c_str());
 		}
 
-		TEST_METHOD(GetParseErrorTest_WithError)
+		TEST_METHOD(GetParseErrorWithError)
 		{
 			char* argv[] = {
 				"exe",
@@ -146,7 +146,7 @@ namespace argument_parser_tests
 			Assert::AreNotEqual("", argparse.getParseError().c_str());
 		}
 
-		TEST_METHOD(AddArgumentTest)
+		TEST_METHOD(AddArgument)
 		{
 			char* argv[] = {
 				"exe",
@@ -163,7 +163,7 @@ namespace argument_parser_tests
 			Assert::IsTrue(argparse.parseArguments());
 		}
 
-		TEST_METHOD(FindArgumentTest)
+		TEST_METHOD(FindArgument)
 		{
 			char* argv[] = {
 				"exe",
@@ -184,7 +184,7 @@ namespace argument_parser_tests
 			Assert::IsFalse(argparse.findArgument(1));
 		}
 
-		TEST_METHOD(NumSetArgumentsTest0)
+		TEST_METHOD(NumSetArguments0)
 		{
 			char* argv[] = {
 				"exe"
@@ -195,7 +195,7 @@ namespace argument_parser_tests
 			Assert::AreEqual(static_cast<size_t>(0), argparse.numSetArguments());
 		}
 
-		TEST_METHOD(NumSetArgumentsTest2)
+		TEST_METHOD(NumSetArguments2)
 		{
 			char* argv[] = {
 				"exe",
@@ -210,7 +210,7 @@ namespace argument_parser_tests
 			Assert::AreEqual(static_cast<size_t>(2), argparse.numSetArguments());
 		}
 
-		TEST_METHOD(UsageTest)
+		TEST_METHOD(Usage)
 		{
 			char* argv[] = {
 				"ExecutableName"

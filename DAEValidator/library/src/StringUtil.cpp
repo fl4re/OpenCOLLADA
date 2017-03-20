@@ -21,6 +21,9 @@ namespace opencollada
 	// Split string by whitespace
 	vector<string> String::Split(const string & s)
 	{
+		if (s.empty())
+			return vector<string>();
+
 		vector<string> parts;
 		istringstream iss(s);
 		while (iss && !iss.eof())
@@ -41,6 +44,12 @@ namespace opencollada
 
 	string String::Replace(const string & str, const string & search_str, const string & replace_str)
 	{
+		if (str.empty() && search_str.empty())
+			return replace_str;
+
+		if (search_str.empty())
+			return str;
+
 		string res(str);
 
 		size_t search_len = search_str.length();

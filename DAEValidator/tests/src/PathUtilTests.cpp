@@ -4,12 +4,12 @@
 using namespace opencollada;
 using namespace std;
 
-namespace path_util_tests
+namespace opencollada_test
 {
 	TEST_CLASS(PathUtilTest)
 	{
 	public:
-		TEST_METHOD(SeparatorTest)
+		TEST_METHOD(Separator)
 		{
 #if _WIN32
 			Assert::AreEqual(
@@ -19,7 +19,7 @@ namespace path_util_tests
 #endif
 		}
 
-		TEST_METHOD(JoinTest)
+		TEST_METHOD(Join)
 		{
 			string a("a");
 			string b("b");
@@ -37,21 +37,21 @@ namespace path_util_tests
 			);
 		}
 
-		TEST_METHOD(IsDirectoryTest)
+		TEST_METHOD(IsDirectory)
 		{
 			Assert::IsTrue(Path::IsDirectory(data_path("path_util")));
 			Assert::IsFalse(Path::IsDirectory(data_path("path_util/dummy")));
 			Assert::IsFalse(Path::IsDirectory(data_path("path_util/unknown")));
 		}
 
-		TEST_METHOD(ExistsTest)
+		TEST_METHOD(Exists)
 		{
 			Assert::IsTrue(Path::Exists(data_path("path_util")));
 			Assert::IsTrue(Path::Exists(data_path("path_util/dummy")));
 			Assert::IsFalse(Path::Exists(data_path("path_util/unknown")));
 		}
 
-		TEST_METHOD(GetExecutablePathTest)
+		TEST_METHOD(GetExecutablePath)
 		{
 #if _WIN32
 			Assert::AreNotEqual(
@@ -61,7 +61,7 @@ namespace path_util_tests
 #endif
 		}
 
-		TEST_METHOD(GetExecutableDirectoryTest)
+		TEST_METHOD(GetExecutableDirectory)
 		{
 			Assert::AreNotEqual(
 				Path::GetExecutableDirectory().find("\\COMMON7\\IDE\\COMMONEXTENSIONS\\MICROSOFT\\TESTWINDOW"),
@@ -69,7 +69,7 @@ namespace path_util_tests
 			);
 		}
 
-		TEST_METHOD(GetWorkingDirectoryTest)
+		TEST_METHOD(GetWorkingDirectory)
 		{
 			Assert::AreNotEqual(
 				Path::GetWorkingDirectory().find(
@@ -83,7 +83,7 @@ namespace path_util_tests
 			);
 		}
 
-		TEST_METHOD(ListDaesTest)
+		TEST_METHOD(ListDaes)
 		{
 			// non-recursive mode
 			auto daes = Path::ListDaes(data_path("path_util"), false);
@@ -94,7 +94,7 @@ namespace path_util_tests
 			Assert::AreEqual(static_cast<size_t>(4), daes.size());
 		}
 
-		TEST_METHOD(GetAbsolutePathTest)
+		TEST_METHOD(GetAbsolutePath)
 		{
 			Assert::AreEqual(Path::GetWorkingDirectory(), Path::GetAbsolutePath(""));
 			Assert::AreEqual(Path::GetWorkingDirectory(), Path::GetAbsolutePath("."));
@@ -108,7 +108,7 @@ namespace path_util_tests
 			Assert::AreEqual(Path::Join(Path::GetWorkingDirectory(), string("bbb")), Path::GetAbsolutePath("aaa/../bbb"));
 		}
 
-		TEST_METHOD(RemoveDotSegmentsTest)
+		TEST_METHOD(RemoveDotSegments)
 		{
 			Assert::AreEqual(string(""), Path::RemoveDotSegments(""));
 			Assert::AreEqual(string(""), Path::RemoveDotSegments("."));
@@ -142,16 +142,17 @@ namespace path_util_tests
 #endif
 		}
 
-		TEST_METHOD(GetFileBaseTest)
+		TEST_METHOD(GetFileBase)
 		{
 #if _WIN32
 			Assert::AreEqual(string("file"), Path::GetFileBase("C:\\dir\\file.ext"));
+			Assert::AreEqual(string(".file"), Path::GetFileBase(".\\path\\.file"));
 #endif
 			Assert::AreEqual(string("file"), Path::GetFileBase("file"));
 			Assert::AreEqual(string("file"), Path::GetFileBase("file.ext"));
 		}
 
-		TEST_METHOD(GetFileSizeTest)
+		TEST_METHOD(GetFileSize)
 		{
 			Assert::AreEqual(static_cast<size_t>(4), Path::GetFileSize(data_path("path_util/root.txt")));
 			Assert::AreEqual(static_cast<size_t>(0), Path::GetFileSize(data_path("path_util/dummy")));

@@ -21,9 +21,9 @@ namespace opencollada
 		size_t getNumParameters() const;
 		bool isSet() const;
 		bool isRequired() const;
-		std::string getHint() const;
-		std::string getHint(size_t index) const;
-		std::string getHelp() const;
+		const std::string & getHint() const;
+		const std::string & getHint(size_t index) const;
+		const std::string & getHelp() const;
 
 		template<typename T>
 		T getValue(size_t index = 0) const
