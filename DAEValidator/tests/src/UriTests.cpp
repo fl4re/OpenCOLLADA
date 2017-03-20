@@ -372,7 +372,40 @@ namespace opencollada_test
 
 		TEST_METHOD(MergePaths)
 		{
-			//string res = Uri::MergePaths(Uri(""), "");
+			Uri base = "scheme://host";
+			Uri rel = "./path";
+
+			Uri uri;
+			uri.set(base, rel);
+			Assert::AreEqual("scheme://host/path", uri.str().c_str());
+
+			base.set("scheme://host/path1");
+			rel.set("./path2");
+			uri.set(base, rel);
+			Assert::AreEqual("scheme://host/path2", uri.str().c_str());
+
+			base.set("scheme://host/path1/");
+			rel.set("./path2");
+			uri.set(base, rel);
+			Assert::AreEqual("scheme://host/path1/path2", uri.str().c_str());
+
+			base.set("scheme://host/path1/");
+			rel.set("./path2/");
+			uri.set(base, rel);
+			Assert::AreEqual("scheme://host/path1/path2/", uri.str().c_str());
+
+			base.set("scheme://host");
+			rel.set("./path2");
+			uri.set(base, rel);
+			Assert::AreEqual("scheme://host/path2", uri.str().c_str());
+		}
+
+		TEST_METHOD(OstreamOperatorRightShift)
+		{
+			Uri uri = "scheme://user:password@host:port/path/file.ext?query#fragment";
+			stringstream ss;
+			ss << uri;
+			Assert::AreEqual("scheme://user:password@host:port/path/file.ext?query#fragment", ss.str().c_str());
 		}
 	};
 }
