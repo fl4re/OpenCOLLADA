@@ -53,8 +53,6 @@ namespace opencollada
 		static std::string MergePaths(const Uri & baseUri, const std::string & ref_path);
 
 		// Rebuild mUri from mScheme, mAuthority, mPath, mQuery and mFragment
-		void rebuild();
-		// Rebuild mUri from mScheme, mAuthority, mPath, mQuery and mFragment but don't validate
 		void rebuild_fast();
 
 	private:

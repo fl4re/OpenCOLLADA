@@ -311,6 +311,17 @@ namespace opencollada_test
 			Assert::AreEqual(string(""), uri.pathFile());
 			Assert::AreEqual(string("query"), uri.query());
 			Assert::AreEqual(string("fragment"), uri.fragment());
+
+			rel.set("/path/");
+			uri.set(base, rel);
+			Assert::IsFalse(uri.empty());
+			Assert::IsTrue(uri.isValid());
+			Assert::AreEqual(string("scheme"), uri.scheme());
+			Assert::AreEqual(string("user:password@host:port"), uri.authority());
+			Assert::AreEqual(string("/path/"), uri.path());
+			Assert::AreEqual(string(""), uri.pathFile());
+			Assert::AreEqual(string(""), uri.query());
+			Assert::AreEqual(string(""), uri.fragment());
 		}
 
 		TEST_METHOD(FromNativePath)
@@ -398,6 +409,11 @@ namespace opencollada_test
 			rel.set("./path2");
 			uri.set(base, rel);
 			Assert::AreEqual("scheme://host/path2", uri.str().c_str());
+
+			base.set("scheme://");
+			rel.set("/path2");
+			uri.set(base, rel);
+			Assert::AreEqual("scheme:///path2", uri.str().c_str());
 		}
 
 		TEST_METHOD(OstreamOperatorRightShift)
@@ -406,6 +422,13 @@ namespace opencollada_test
 			stringstream ss;
 			ss << uri;
 			Assert::AreEqual("scheme://user:password@host:port/path/file.ext?query#fragment", ss.str().c_str());
+		}
+
+		TEST_METHOD(RebuildFast)
+		{
+			Uri uri = "scheme://user:password@host:port/path/file.ext?query#fragment";
+			uri.setFragment("new_fragment");
+			Assert::AreEqual("scheme://user:password@host:port/path/file.ext?query#new_fragment", uri.str().c_str());
 		}
 	};
 }

@@ -1,24 +1,14 @@
 #include "Common.h"
-#include <CodeCoverage\CodeCoverage.h> 
 
-using namespace std;
+#define CODE_COVERAGE 1
 
-/*
-// Exclude a particular function:  
-ExcludeFromCodeCoverage(Exclusion1, L"MyNamespace::MyClass::MyFunction");
-
-// Exclude all the functions in a particular class:  
-ExcludeFromCodeCoverage(Exclusion2, L"MyNamespace::MyClass2::*");
-
-// Exclude all the functions generated from a particular template:   
-ExcludeFromCodeCoverage(Exclusion3, L"*::MyFunction<*>");
-
-// Exclude all the code from a particular .cpp file:  
-ExcludeSourceFromCodeCoverage(Exclusion4, L"*\\unittest1.cpp");
-*/
+#if CODE_COVERAGE
+#include <CodeCoverage/CodeCoverage.h>
 ExcludeSourceFromCodeCoverage(External, L"*\\Externals\\*");
 ExcludeSourceFromCodeCoverage(dirent, L"*\\dirent.h");
+#endif
 
+using namespace std;
 
 namespace opencollada_test
 {

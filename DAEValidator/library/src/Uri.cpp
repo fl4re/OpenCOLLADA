@@ -356,14 +356,6 @@ namespace opencollada
 		}
 	}
 
-	void Uri::rebuild()
-	{
-		rebuild_fast();
-
-		string scheme, authority, path, query, fragment;
-		mValid = Parse(mUri, scheme, authority, path, query, fragment);
-	}
-
 	void Uri::rebuild_fast()
 	{
 		mUri.clear();
