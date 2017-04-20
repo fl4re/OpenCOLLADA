@@ -149,35 +149,12 @@ namespace opencollada
 
 		int result = 0;
 
-		// Get root <COLLADA> element
-		auto collada = dae.root();
-		if (!collada)
-		{
-			cerr << "Can't find document root" << endl;
-			return 1;
-		}
-
-		if (collada.name() != Strings::COLLADA)
-		{
-			cerr << "Root element is not <" << Strings::COLLADA << ">" << endl;
-			return 1;
-		}
-
-		// Get COLLADA namespace
-		auto xmlns = collada.ns();
-		if (!xmlns)
-		{
-			cerr << "COLLADA element has no namespace" << endl;
-			return 1;
-		}
-
-		// Determine COLLADA version used by input dae file
-		auto href = xmlns.href();
-		if (href == colladaNamespace141)
+		Dae::Version version = dae.getVersion();
+		if (version == Dae::Version::COLLADA14)
 		{
 			result |= ValidateAgainstSchema(dae, colladaSchema141);
 		}
-		else if (href == colladaNamespace15)
+		else if (version == Dae::Version::COLLADA15)
 		{
 			//result |= ValidateAgainstSchema(dae, colladaSchema15);
 			cerr << "COLLADA 1.5 not supported yet." << endl;

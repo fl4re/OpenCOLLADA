@@ -208,19 +208,14 @@ namespace opencollada
 
 	Uri Uri::FromNativePath(const string & path)
 	{
-#ifdef _WIN32
-		string tmp = path;
-		
+		string uri = Path::GetAbsolutePath(path);
+#ifdef _WIN32		
 		// Convert c: to /c:
-		if (tmp.length() >= 2 && isalpha(tmp[0]) && tmp[1] == ':')
-			tmp.insert(0, 1, '/');
+		if (uri.length() >= 2 && isalpha(uri[0]) && uri[1] == ':')
+			uri.insert(0, 1, '/');
 
 		// Replace \ by /
-		tmp = String::Replace(tmp, "\\", "/");
-
-		string uri = tmp;
-#else
-		string uri = path;
+		uri = String::Replace(uri, "\\", "/");
 #endif
 		Uri res = Encode(uri);
 		res.setScheme("file");

@@ -228,5 +228,19 @@ namespace opencollada_test
 			string usage = argparse.usage();
 			Assert::AreEqual("\nCOLLADA document validator.\n\nValidates COLLADA documents against COLLADA schema and performs several coherency tests.\n\nUsage:\n\nExecutableName arg0_hint [arg1] [arg2] [arg3] [arg5 param1 param2] arg6 param1 param2 param3 [long_arg4 param]\n\narg0_hint \narg1      \narg2      Help for arg2.\narg3      Help for arg3.\narg5      Help for arg5.\narg6      Help for arg6.\nlong_arg4 Help for arg4.\n", usage.c_str());
 		}
+
+		TEST_METHOD(GetValue)
+		{
+			char* argv[] = {
+				"exe",
+				"switch", "param"
+			};
+			int argc = sizeof(argv) / sizeof(argv[0]);
+			ArgumentParser argparse(argc, argv);
+			argparse.addArgument("switch").numParameters(1);
+			Assert::IsTrue(argparse.parseArguments());
+			Assert::AreEqual(static_cast<size_t>(1), argparse.numSetArguments());
+			Assert::AreEqual(argparse.findArgument("switch").getValue<string>().c_str(), "param");
+		}
 	};
 }

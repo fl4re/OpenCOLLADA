@@ -15,11 +15,21 @@ namespace opencollada
 		using Super = XmlDoc;
 
 	public:
+
+		enum class Version
+		{
+			Unknown,
+			COLLADA14,
+			COLLADA15
+		};
+
 		Dae() = default;
 		Dae(Dae && other);
 		const Dae & operator = (Dae && other);
 
 		virtual void readFile(const std::string & path) override;
+		
+		Version getVersion() const;
 
 		const Uri & getURI() const { return mUri; }
 

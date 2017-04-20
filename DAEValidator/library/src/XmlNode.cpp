@@ -80,14 +80,15 @@ namespace opencollada
 
 	const XmlNodeSet & XmlNode::selectNodes(const string & xpath) const
 	{
-		auto & xpathCache = XmlDoc::GetXmlDoc(mNode->doc).mXPathCache;
+		XmlDoc & doc = XmlDoc::GetXmlDoc(mNode->doc);
+		auto & xpathCache = doc.mXPathCache;
 		auto cache = xpathCache.find(XPathCacheKey(mNode, xpath));
 		if (cache != xpathCache.end())
 			return cache->second;
 
 		if (xmlXPathContextPtr context = xmlXPathNewContext(mNode->doc))
 		{
-			xmlXPathRegisterNs(context, BAD_CAST "collada", BAD_CAST "http://www.collada.org/2005/11/COLLADASchema");
+			xmlXPathRegisterNs(context, BAD_CAST "collada", BAD_CAST doc.getRootNamespace().c_str());
 			xmlXPathRegisterNs(context, BAD_CAST "xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
 
 			context->node = mNode;

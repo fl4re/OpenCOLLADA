@@ -6,6 +6,7 @@
 
 #include "XmlDoc.h"
 #include "XmlNode.h"
+#include "XmlNamespace.h"
 
 #include <fstream>
 #include "no_warning_vector"
@@ -110,6 +111,14 @@ namespace opencollada
 	XmlNode XmlDoc::root() const
 	{
 		return xmlDocGetRootElement(mDoc);
+	}
+
+	string XmlDoc::getRootNamespace() const
+	{
+		if (auto r = root())
+			if (auto n = r.ns())
+				return n.href();
+		return "";
 	}
 
 	XmlDoc::TempRootMod XmlDoc::setTempRoot(const XmlNode & node) const

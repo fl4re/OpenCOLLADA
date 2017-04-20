@@ -30,6 +30,7 @@ namespace opencollada
 		operator bool() const;
 		void reset();
 		XmlNode root() const;
+		std::string getRootNamespace() const;
 
 		class TempRootMod
 		{

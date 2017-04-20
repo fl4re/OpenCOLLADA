@@ -124,6 +124,7 @@ if (WIN32)
 		tests/src/ArgumentParserTests.cpp
 		tests/src/Common.cpp
 		tests/src/DaeTests.cpp
+		tests/src/DaeValidatorTests.cpp
 		tests/src/PathUtilTests.cpp
 		tests/src/StringUtilTests.cpp
 		tests/src/UriTests.cpp

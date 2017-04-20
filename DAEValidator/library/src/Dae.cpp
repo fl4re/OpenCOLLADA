@@ -8,6 +8,9 @@ using namespace std;
 
 namespace opencollada
 {
+	extern const char* colladaNamespace141;
+	extern const char* colladaNamespace15;
+
 	const string xpath_all = "//collada:";
 	const string xpath_or_all = "|//collada:";
 	const string xpath_child = "/collada:";
@@ -207,13 +210,16 @@ namespace opencollada
 			while (ss >> buffer)
 				mIDREFs.emplace_back(IDREF_array.line(), buffer);
 		}
+	}
 
-		// <accessor>/<param type="IDREF">
-		const auto & params = root().selectNodes(xpath_all + Strings::accessor + xpath_child + Strings::param + "[@type=\"IDREF\"]");
-		for (auto param : params)
-		{
-			mIDREFs.emplace_back(param.line(), param.text());
-		}
+	Dae::Version Dae::getVersion() const
+	{
+		string root_namespace = getRootNamespace();
+		if (root_namespace == colladaNamespace141)
+			return Version::COLLADA14;
+		else if (root_namespace == colladaNamespace15)
+			return Version::COLLADA15;
+		return Version::Unknown;
 	}
 
 	const set<string> & Dae::getIds() const
@@ -237,10 +243,8 @@ namespace opencollada
 
 		Uri absoluteUri(mUri, uri);
 
-		if (absoluteUri.path().empty())
-			return;
-
-		if (!absoluteUri.pathFile().empty())
+		string pathFile = absoluteUri.pathFile();
+		if (!pathFile.empty())
 		{
 			Uri absoluteUriNoFragment(absoluteUri);
 			absoluteUriNoFragment.setFragment(string());
