@@ -25,14 +25,6 @@ namespace std
 
 namespace opencollada
 {
-	extern const char* colladaNamespace141;
-	extern const char* colladaSchemaFileName141;
-	extern XmlSchema colladaSchema141;
-
-	extern const char* colladaNamespace15;
-	extern const char* colladaSchemaFileName15;
-	//extern XmlSchema colladaSchema15;
-
 	DaeValidator::DaeValidator(const list<string> & daePaths)
 	{
 		mDaePaths.reserve(daePaths.size());
@@ -152,11 +144,11 @@ namespace opencollada
 		Dae::Version version = dae.getVersion();
 		if (version == Dae::Version::COLLADA14)
 		{
-			result |= ValidateAgainstSchema(dae, colladaSchema141);
+			result |= ValidateAgainstSchema(dae, Dae::GetColladaSchema141());
 		}
 		else if (version == Dae::Version::COLLADA15)
 		{
-			//result |= ValidateAgainstSchema(dae, colladaSchema15);
+			//result |= ValidateAgainstSchema(dae, Dae::GetColladaSchema15());
 			cerr << "COLLADA 1.5 not supported yet." << endl;
 			return 1;
 		}
@@ -181,7 +173,7 @@ namespace opencollada
 					const string & ns = parts[i - 1];
 					const string & xsdUri = parts[i];
 
-					if (ns != colladaNamespace141 && ns != colladaNamespace15)
+					if (ns != Dae::GetColladaNamespace141() && ns != Dae::GetColladaNamespace15())
 					{
 						// "insert" does nothing if element already exists.
 						mSchemas.insert(pair<string, XmlSchema>(ns, XmlSchema()));

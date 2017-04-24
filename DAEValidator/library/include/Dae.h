@@ -27,6 +27,12 @@ namespace opencollada
 		Dae(Dae && other);
 		const Dae & operator = (Dae && other);
 
+		static const XmlSchema & GetColladaSchema141();
+		static const XmlSchema & GetColladaSchema15();
+
+		static const std::string & GetColladaNamespace141();
+		static const std::string & GetColladaNamespace15();
+
 		virtual void readFile(const std::string & path) override;
 		
 		Version getVersion() const;
@@ -55,5 +61,13 @@ namespace opencollada
 
 		mutable std::set<std::string> mIdCache;
 		mutable bool mCacheInitialized = false;
+
+		static std::string mColladaNamespace141;
+		static std::string mColladaSchemaFileName141;
+		static XmlSchema mColladaSchema141;
+
+		static std::string mColladaNamespace15;
+		static std::string mColladaSchemaFileName15;
+		static XmlSchema mColladaSchema15;
 	};
 }

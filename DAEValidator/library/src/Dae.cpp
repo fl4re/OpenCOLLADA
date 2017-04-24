@@ -1,15 +1,22 @@
 
 #include "Dae.h"
+#include "PathUtil.h"
 #include "StringUtil.h"
 #include "Strings.h"
+#include <iostream>
 #include <sstream>
 
 using namespace std;
 
 namespace opencollada
 {
-	extern const char* colladaNamespace141;
-	extern const char* colladaNamespace15;
+	string Dae::mColladaNamespace141 = "http://www.collada.org/2005/11/COLLADASchema";
+	string Dae::mColladaSchemaFileName141 = "collada_schema_1_4_1.xsd";
+	XmlSchema Dae::mColladaSchema141;
+
+	string Dae::mColladaNamespace15 = "http://www.collada.org/2008/03/COLLADASchema";
+	string Dae::mColladaSchemaFileName15 = "collada_schema_1_5.xsd";
+	XmlSchema Dae::mColladaSchema15;
 
 	const string xpath_all = "//collada:";
 	const string xpath_or_all = "|//collada:";
@@ -26,6 +33,34 @@ namespace opencollada
 		mUri = move(other.mUri);
 		mExternalDAEs = move(other.mExternalDAEs);
 		return *this;
+	}
+
+	const XmlSchema & Dae::GetColladaSchema141()
+	{
+		if (!mColladaSchema141)
+			mColladaSchema141.readFile(Path::Join(Path::GetExecutableDirectory(), mColladaSchemaFileName141));
+		if (!mColladaSchema141)
+			mColladaSchema141.readFile(Path::Join(Path::GetWorkingDirectory(), mColladaSchemaFileName141));
+		return mColladaSchema141;
+	}
+
+	const XmlSchema & Dae::GetColladaSchema15()
+	{
+		if (!mColladaSchema15)
+			mColladaSchema15.readFile(Path::Join(Path::GetExecutableDirectory(), mColladaSchemaFileName15));
+		if (!mColladaSchema15)
+			mColladaSchema15.readFile(Path::Join(Path::GetWorkingDirectory(), mColladaSchemaFileName15));
+		return mColladaSchema15;
+	}
+
+	const std::string & Dae::GetColladaNamespace141()
+	{
+		return mColladaNamespace141;
+	}
+
+	const std::string & Dae::GetColladaNamespace15()
+	{
+		return mColladaNamespace15;
 	}
 
 	void Dae::readFile(const string & path)
@@ -215,9 +250,9 @@ namespace opencollada
 	Dae::Version Dae::getVersion() const
 	{
 		string root_namespace = getRootNamespace();
-		if (root_namespace == colladaNamespace141)
+		if (root_namespace == Dae::GetColladaNamespace141())
 			return Version::COLLADA14;
-		else if (root_namespace == colladaNamespace15)
+		else if (root_namespace == Dae::GetColladaNamespace15())
 			return Version::COLLADA15;
 		return Version::Unknown;
 	}

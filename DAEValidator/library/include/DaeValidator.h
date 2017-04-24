@@ -38,13 +38,5 @@ namespace opencollada
 		mutable std::map<std::string, XmlSchema> mSchemas;
 		// namespace to xsd location
 		mutable std::map<std::string, std::string> mSchemaLocations;
-
-		static string colladaNamespace141 = "http://www.collada.org/2005/11/COLLADASchema";
-		const char* colladaSchemaFileName141 = "collada_schema_1_4_1.xsd";
-		XmlSchema colladaSchema141;
-
-		const char* colladaNamespace15 = "http://www.collada.org/2008/03/COLLADASchema";
-		const char* colladaSchemaFileName15 = "collada_schema_1_5.xsd";
-		//XmlSchema colladaSchema15;
 	};
 }

@@ -85,10 +85,11 @@ set_target_properties(DAEValidatorExecutable PROPERTIES OUTPUT_NAME DAEValidator
 if (WIN32)
 # C4505: 'function' : unreferenced local function has been removed
 # C4514: 'function' : unreferenced inline function has been removed
+# C4592: symbol will be dynamically initialized (implementation limitation)
 # C4710: 'function' : function not inlined
 # C4711: function 'function' selected for inline expansion
 # C4820: 'bytes' bytes padding added after construct 'member_name'
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /Wall /WX /wd4505 /wd4514 /wd4710 /wd4711 /wd4820")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /Wall /WX /wd4505 /wd4514 /wd4592 /wd4710 /wd4711 /wd4820")
 else ()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
 endif ()
@@ -98,7 +99,6 @@ add_custom_command(
 	COMMAND ${CMAKE_COMMAND} -E copy_directory
 	${CMAKE_CURRENT_SOURCE_DIR}/xsd $<TARGET_FILE_DIR:DAEValidatorExecutable>
 	)
-
 
 # DAEValidatorTests
 
@@ -152,6 +152,16 @@ if (WIN32)
 		ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests/lib
 		LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests/lib
 		RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tests/bin
+		)
+	add_custom_command(
+		TARGET DAEValidatorTests POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/xsd ${CMAKE_CURRENT_BINARY_DIR}/tests/bin/Debug
+		)
+	add_custom_command(
+		TARGET DAEValidatorTests POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy_directory
+		${CMAKE_CURRENT_SOURCE_DIR}/xsd ${CMAKE_CURRENT_BINARY_DIR}/tests/bin/Release
 		)
 endif ()
 

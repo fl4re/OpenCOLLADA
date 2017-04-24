@@ -55,22 +55,6 @@ namespace opencollada
 		bool muted = argparse.findArgument(quiet);
 		Log::Setup(muted);
 
-		// Pre-load COLLADA schemas	
-		colladaSchema141.readFile(Path::Join(Path::GetExecutableDirectory(), colladaSchemaFileName141));
-		if (!colladaSchema141)
-		{
-			cerr << "Error loading " << Path::Join(Path::GetExecutableDirectory(), colladaSchemaFileName141) << endl;
-			return 1;
-		}
-
-		// Disabled for the moment. COLLADA schema 1.5 generates errors.
-		//colladaSchema15.readFile(Path::Join(GetExecutableDirectory(), colladaSchemaFileName15));
-		//if (!colladaSchema15)
-		//{
-		//	cerr << "Error loading " << Path::Join(GetExecutableDirectory(), colladaSchemaFileName15) << endl;
-		//	return 1;
-		//}
-
 		string path = Path::GetAbsolutePath(argparse.findArgument(0).getValue<string>());
 
 		list<string> daePaths;
