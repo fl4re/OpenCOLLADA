@@ -6,9 +6,9 @@ using namespace std;
 
 namespace opencollada
 {
-	XmlNodeIteratorByName::XmlNodeIteratorByName(const XmlNode & node, const string & name)
+	XmlNodeIteratorByName::XmlNodeIteratorByName(const XmlNode & node)
 		: mNode(node)
-		, mName(name)
+		, mName(node ? node.name() : string())
 	{}
 
 	const XmlNode & XmlNodeIteratorByName::operator*() const

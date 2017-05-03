@@ -53,7 +53,7 @@ namespace opencollada
 		}
 
 		bool muted = argparse.findArgument(quiet);
-		Log::Setup(muted);
+		Log log(muted);
 
 		string path = Path::GetAbsolutePath(argparse.findArgument(0).getValue<string>());
 

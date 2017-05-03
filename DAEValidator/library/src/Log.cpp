@@ -67,10 +67,7 @@ namespace opencollada
 	void libxmlhook::GenericErrorFunc(void *, const char *, ...)
 	{}
 
-	unique_ptr<streamhook> Log::mCoutHook;
-	unique_ptr<streamhook> Log::mCerrHook;
-
-	void Log::Setup(bool quiet)
+	Log::Log(bool quiet)
 	{
 		// mute/unmute cout and redirect to VS output
 		mCoutHook.reset(new streamhook(cout, quiet, [=](const std::string & str) {

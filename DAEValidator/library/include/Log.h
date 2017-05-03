@@ -40,10 +40,13 @@ namespace opencollada
 	class Log
 	{
 	public:
-		static void Setup(bool quiet);
+		Log(bool quiet);
 
 	private:
-		static std::unique_ptr<streamhook> mCoutHook;
-		static std::unique_ptr<streamhook> mCerrHook;
+		Log(const Log &) = delete;
+		const Log & operator = (const Log &) = delete;
+
+		std::unique_ptr<streamhook> mCoutHook;
+		std::unique_ptr<streamhook> mCerrHook;
 	};
 }

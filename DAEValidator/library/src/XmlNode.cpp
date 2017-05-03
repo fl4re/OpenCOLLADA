@@ -21,6 +21,11 @@ namespace opencollada
 		return mNode != nullptr;
 	}
 
+	bool XmlNode::operator == (const XmlNode & other) const
+	{
+		return mNode == other.mNode;
+	}
+
 	XmlDoc & XmlNode::doc() const
 	{
 		return XmlDoc::GetXmlDoc(mNode->doc);
@@ -103,7 +108,7 @@ namespace opencollada
 
 	XmlNodes<XmlNodeIteratorByName> XmlNode::children(const string & name) const
 	{
-		return XmlNodes<XmlNodeIteratorByName>(XmlNodeIteratorByName(child(name), name), XmlNodeIteratorByName());
+		return XmlNodes<XmlNodeIteratorByName>(XmlNodeIteratorByName(child(name)), XmlNodeIteratorByName());
 	}
 
 	XmlNode XmlNode::next(const string & name) const

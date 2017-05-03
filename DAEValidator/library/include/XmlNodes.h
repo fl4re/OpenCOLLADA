@@ -38,7 +38,7 @@ namespace opencollada
 	{
 	public:
 		XmlNodeIteratorByName() = default;
-		XmlNodeIteratorByName(const XmlNode & node, const std::string & name);
+		XmlNodeIteratorByName(const XmlNode & node);
 
 		const XmlNode & operator*() const;
 		void operator++();

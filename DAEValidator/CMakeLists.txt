@@ -125,9 +125,18 @@ if (WIN32)
 		tests/src/Common.cpp
 		tests/src/DaeTests.cpp
 		tests/src/DaeValidatorTests.cpp
+		tests/src/DaeValidatorLibraryTests.cpp
+		tests/src/LogTests.cpp
 		tests/src/PathUtilTests.cpp
 		tests/src/StringUtilTests.cpp
 		tests/src/UriTests.cpp
+		tests/src/XmlAttributeTests.cpp
+		tests/src/XmlDocTests.cpp
+		tests/src/XmlNamespaceTests.cpp
+		tests/src/XmlNodeSetTests.cpp
+		tests/src/XmlNodesTests.cpp
+		tests/src/XmlNodeTests.cpp
+		tests/src/XmlSchemaTests.cpp
 
 		tests/include/Common.h
 	)

@@ -57,6 +57,11 @@ namespace opencollada
 		: mNodeSet(nodeSet)
 	{}
 
+	bool XmlNodeSet::empty() const
+	{
+		return size() == 0;
+	}
+
 	XmlNodeSet::iterator XmlNodeSet::begin() const
 	{
 		if (!mXPathObject)

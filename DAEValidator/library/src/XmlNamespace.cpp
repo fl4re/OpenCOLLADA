@@ -15,6 +15,8 @@ namespace opencollada
 
 	string XmlNamespace::href() const
 	{
-		return reinterpret_cast<const XmlChar*>(mNs->href);
+		if (mNs)
+			return reinterpret_cast<const XmlChar*>(mNs->href);
+		return string();
 	}
 }

@@ -15,11 +15,15 @@ namespace opencollada
 
 	string XmlAttribute::name() const
 	{
-		return reinterpret_cast<const XmlChar*>(mAttr->name);
+		if (mAttr)
+			return reinterpret_cast<const XmlChar*>(mAttr->name);
+		return string();
 	}
 
 	string XmlAttribute::value() const
 	{
-		return reinterpret_cast<const XmlChar*>(mAttr->children->content);
+		if (mAttr)
+			return reinterpret_cast<const XmlChar*>(mAttr->children->content);
+		return string();
 	}
 }

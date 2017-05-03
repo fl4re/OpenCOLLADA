@@ -33,6 +33,7 @@ namespace opencollada
 			int mIndex = 0;
 		};
 
+		bool empty() const;
 		iterator begin() const;
 		iterator end() const;
 		size_t size() const;
