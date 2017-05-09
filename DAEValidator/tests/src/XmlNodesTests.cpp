@@ -81,5 +81,66 @@ namespace opencollada_test
 				Assert::IsTrue(nodes);
 			}
 		}
+
+		TEST_METHOD(XmlNodeIteratorByNameDefaultConstructor)
+		{
+			XmlNodeIteratorByName it;
+			Assert::IsFalse(*it);
+		}
+
+		TEST_METHOD(XmlNodeIteratorByNameConstructor)
+		{
+			XmlDoc doc;
+			doc.readFile(data_path("xml/file.dae"));
+			auto it = XmlNodeIteratorByName(doc.root());
+			Assert::IsTrue(*it);
+		}
+
+		TEST_METHOD(XmlNodeIteratorByNameDereferenceOperator)
+		{
+			{
+				XmlNodeIteratorByName it;
+				Assert::IsFalse(*it);
+			}
+			{
+				XmlDoc doc;
+				doc.readFile(data_path("xml/file.dae"));
+				auto it = XmlNodeIteratorByName(doc.root());
+				Assert::IsTrue(*it);
+			}
+		}
+
+		TEST_METHOD(XmlNodeIteratorByNameIncrementOperator)
+		{
+			{
+				XmlNodeIteratorByName it;
+				Assert::IsFalse(*it);
+				++it;
+				Assert::IsFalse(*it);
+			}
+			{
+				XmlDoc doc;
+				doc.readFile(data_path("xml/file.dae"));
+				{
+					auto it = XmlNodeIteratorByName(doc.root());
+					Assert::IsTrue(*it);
+					++it;
+					Assert::IsFalse(*it);
+				}
+				{
+					const auto & skin_sources = doc.root().selectNodes("//collada:skin/collada:source");
+					auto it = XmlNodeIteratorByName(skin_sources[0]);
+					Assert::IsTrue(*it); ++it;
+					Assert::IsTrue(*it); ++it;
+					Assert::IsTrue(*it); ++it;
+					Assert::IsFalse(*it);
+				}
+			}
+		}
+
+		TEST_METHOD(XmlNodeIteratorByNameOperatorIsNotEqual)
+		{
+
+		}
 	};
 }

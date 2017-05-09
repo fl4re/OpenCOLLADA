@@ -113,10 +113,10 @@ namespace opencollada
 
 	XmlNode XmlNode::next(const string & name) const
 	{
-		xmlNodePtr next = mNode->next;
-		while (next && name == mNode->next->name)
+		xmlNodePtr next = mNode ? mNode->next : nullptr;
+		while (next && name != reinterpret_cast<const XmlChar*>(next->name))
 		{
-			next = mNode->next;
+			next = next->next;
 		}
 		return XmlNode(next);
 	}
