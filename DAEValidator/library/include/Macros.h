@@ -8,6 +8,8 @@
 
 #if defined(_MSC_VER)
 #define IS_MSVC_AND_MSVC_VERSION_LT(version) (_MSC_VER < version)
+#define IS_MSVC_AND_MSVC_VERSION_GTE(version) (_MSC_VER >= version)
 #else
 #define IS_MSVC_AND_MSVC_VERSION_LT(version) 0
+#define IS_MSVC_AND_MSVC_VERSION_GTE(version) 0
 #endif

@@ -2,7 +2,7 @@
 
 #include "no_warning_functional"
 #include "no_warning_map"
-#include <sstream>
+#include "no_warning_sstream"
 #include "no_warning_string"
 #include "no_warning_vector"
 

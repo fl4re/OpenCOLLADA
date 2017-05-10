@@ -1,6 +1,6 @@
 #include "StringUtil.h"
-#include <sstream>
-#include <algorithm>
+#include "no_warning_algorithm"
+#include "no_warning_sstream"
 
 using namespace std;
 

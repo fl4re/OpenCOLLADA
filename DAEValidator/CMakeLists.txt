@@ -27,11 +27,20 @@ set(DAEValidatorLibrarySources
 	library/include/Log.h
 	library/include/Macros.h
 	library/include/DAEValidatorLibrary.h
+	library/include/no_warning_algorithm
 	library/include/no_warning_array
+	library/include/no_warning_begin
+	library/include/no_warning_chrono
+	library/include/no_warning_end
+	library/include/no_warning_fstream
 	library/include/no_warning_functional
+	library/include/no_warning_iomanip
 	library/include/no_warning_iostream
 	library/include/no_warning_list
 	library/include/no_warning_map
+	library/include/no_warning_memory
+	library/include/no_warning_regex
+	library/include/no_warning_sstream
 	library/include/no_warning_string
 	library/include/no_warning_vector
 	library/include/no_warning_Windows.h

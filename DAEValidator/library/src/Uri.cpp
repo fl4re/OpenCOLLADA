@@ -2,7 +2,7 @@
 #include "StringUtil.h"
 #include "Uri.h"
 #include <cctype>
-#include <regex>
+#include "no_warning_regex"
 
 using namespace std;
 

@@ -4,7 +4,7 @@
 #include "StringUtil.h"
 #include "Strings.h"
 #include <iostream>
-#include <sstream>
+#include "no_warning_sstream"
 
 using namespace std;
 

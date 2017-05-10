@@ -8,7 +8,7 @@
 #include "XmlNode.h"
 #include "XmlNamespace.h"
 
-#include <fstream>
+#include "no_warning_fstream"
 #include "no_warning_vector"
 #include <sys/stat.h>
 

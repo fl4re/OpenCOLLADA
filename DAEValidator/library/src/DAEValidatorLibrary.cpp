@@ -1,4 +1,4 @@
-#include <chrono>
+#include "no_warning_chrono"
 #include "no_warning_iostream"
 
 #include "ArgumentParser.h"
