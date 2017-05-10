@@ -13,7 +13,7 @@
 				</technique_common>
 			</source>
 			<source id="source_2">
-				<IDREF_array count="1">node_2</IDREF_array>
+				<IDREF_array count="1">node_2 unknown</IDREF_array>
 			</source>
 			<sampler id="sampler_0">
 				<input semantic="INPUT" source="#source_0"/>
@@ -165,8 +165,14 @@
 				</instance_controller>
 				<node id="node_3" sid="Root"/>
 			</node>
+			<node id="node_3">
+				<instance_node url="./links_error_ref.dae#unknown"/>
+			</node>
+			<node id="node_4">
+				<instance_node url="./links_error_ref2.dae#unknown"/>
+			</node>
 			<evaluate_scene>
-				<render camera_node="#camera_0"/>
+				<render camera_node="./unknown.dae#camera_0"/>
 			</evaluate_scene>
 		</visual_scene>
 	</library_visual_scenes>

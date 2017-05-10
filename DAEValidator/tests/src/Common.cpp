@@ -1,11 +1,12 @@
 #include "Common.h"
 
-#define CODE_COVERAGE 0
+#define CODE_COVERAGE 1
 
 #if CODE_COVERAGE
 #include <CodeCoverage/CodeCoverage.h>
 ExcludeSourceFromCodeCoverage(External, L"*\\Externals\\*");
 ExcludeSourceFromCodeCoverage(dirent, L"*\\dirent.h");
+ExcludeSourceFromCodeCoverage(vcruntime_new, L"*\\vcruntime_new.h");
 #endif
 
 using namespace std;

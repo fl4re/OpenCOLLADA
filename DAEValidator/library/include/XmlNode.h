@@ -19,6 +19,7 @@ namespace opencollada
 		XmlNode() = default;
 		operator bool() const;
 		bool operator == (const XmlNode & other) const;
+		bool operator != (const XmlNode & other) const;
 
 		XmlDoc & doc() const;
 		XmlNode child(const std::string & name) const;
@@ -43,4 +44,3 @@ namespace opencollada
 }
 
 bool operator == (const std::string & s, const unsigned char* c);
-//bool operator != (const std::string & s, const unsigned char* c);

@@ -98,7 +98,9 @@ if (WIN32)
 # C4710: 'function' : function not inlined
 # C4711: function 'function' selected for inline expansion
 # C4820: 'bytes' bytes padding added after construct 'member_name'
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /Wall /WX /wd4505 /wd4514 /wd4592 /wd4710 /wd4711 /wd4820")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /Wall /WX /wd4505 /wd4514 /wd4592 /wd4710 /wd4711 /wd4820 /Zi")
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /DEBUG /OPT:REF /OPT:ICF")
+	set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /DEBUG /OPT:REF /OPT:ICF")
 else ()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror")
 endif ()

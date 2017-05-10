@@ -26,6 +26,11 @@ namespace opencollada
 		return mNode == other.mNode;
 	}
 
+	bool XmlNode::operator != (const XmlNode & other) const
+	{
+		return mNode != other.mNode;
+	}
+
 	XmlDoc & XmlNode::doc() const
 	{
 		return XmlDoc::GetXmlDoc(mNode->doc);

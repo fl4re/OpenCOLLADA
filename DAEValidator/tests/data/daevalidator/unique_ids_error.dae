@@ -142,7 +142,7 @@
 		</physics_model>
 	</library_physics_models>
 	<library_physics_scenes>
-		<physics_scene id="physics_scene_0">
+		<physics_scene id="{physics_scene_0">
 			<instance_physics_model url="#physics_model_0" parent="#physics_model_0">
 				<instance_rigid_body body="rigid_body_a" target="#node_1">
 					<technique_common/>

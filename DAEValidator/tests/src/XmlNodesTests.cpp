@@ -140,7 +140,30 @@ namespace opencollada_test
 
 		TEST_METHOD(XmlNodeIteratorByNameOperatorIsNotEqual)
 		{
+			XmlDoc doc;
+			doc.readFile(data_path("xml/file.dae"));
 
+			const auto & skin_sources = doc.root().selectNodes("//collada:skin/collada:source");
+
+			auto root = XmlNodeIteratorByName(doc.root());
+			auto null = XmlNodeIteratorByName();
+			auto source = XmlNodeIteratorByName(skin_sources[0]);
+
+			Assert::IsFalse(root != root);
+			Assert::IsFalse(null != null);
+			Assert::IsFalse(source != source);
+			Assert::IsTrue(root != null);
+			Assert::IsTrue(root != source);
+			Assert::IsTrue(source != null);
+			++source;
+			Assert::IsTrue(root != source);
+			Assert::IsTrue(source != null);
+			++source;
+			Assert::IsTrue(root != source);
+			Assert::IsTrue(source != null);
+			++source;
+			Assert::IsTrue(root != source);
+			Assert::IsFalse(source != null);
 		}
 	};
 }

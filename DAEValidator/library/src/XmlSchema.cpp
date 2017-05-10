@@ -22,6 +22,7 @@ namespace opencollada
 
 	void XmlSchema::readFile(const string & url)
 	{
+		mUri = url;
 		if (xmlSchemaParserCtxtPtr ctxt = xmlSchemaNewParserCtxt(url.c_str()))
 		{
 			mSchema = xmlSchemaParse(ctxt);

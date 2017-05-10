@@ -301,11 +301,14 @@ namespace opencollada
 		{
 			mCacheInitialized = true;
 
-			const auto & nodes = root().selectNodes("//*[@id]");
-			for (const auto & node : nodes)
+			if (auto root_node = root())
 			{
-				string id = node.attribute("id").value();
-				mIdCache.insert(id);
+				const auto & nodes = root_node.selectNodes("//*[@id]");
+				for (const auto & node : nodes)
+				{
+					string id = node.attribute("id").value();
+					mIdCache.insert(id);
+				}
 			}
 		}
 	}

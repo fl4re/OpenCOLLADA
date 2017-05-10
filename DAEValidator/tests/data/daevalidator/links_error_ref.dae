@@ -9,7 +9,7 @@
 			<source id="source_0">
 				<float_array id="float_array_0" count="1">0</float_array>
 				<technique_common>
-					<accessor source="#float_array_0" count="1"/>
+					<accessor source="#float_array" count="1"/>
 				</technique_common>
 			</source>
 			<source id="source_2">
@@ -138,14 +138,6 @@
 						</box>
 					</shape>
 				</technique_common>
-				<extra>
-					<technique profile="PhysX_3.x" xmlns:px="http://www.collada.org/2016/08/COLLADAPhysX3Schema" xsi:schemaLocation="http://www.collada.org/2016/08/COLLADAPhysX3Schema http://www.collada.org/2016/08/COLLADAPhysX3Schema.xsd">
-						<px:px_rigid_body>
-							<px:global_pose>0 0 0.707107 0.707107 -8 6 2.27374e-13 </px:global_pose>
-							<px:sleep_threshold>5e-7</px:sleep_threshold>
-						</px:px_rigid_body>
-					</technique>
-				</extra>
 			</rigid_body>
 		</physics_model>
 	</library_physics_models>
@@ -174,7 +166,7 @@
 				<node id="node_3" sid="Root"/>
 			</node>
 			<evaluate_scene>
-				<render camera_node="#camera_0"/>
+				<render camera_node="./unknown.dae#camera_0"/>
 			</evaluate_scene>
 		</visual_scene>
 	</library_visual_scenes>

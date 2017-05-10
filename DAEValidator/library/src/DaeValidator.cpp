@@ -374,18 +374,21 @@ namespace opencollada
 					auto it = dae.getExternalDAEs().find(no_fragment_uri);
 					if (it != dae.getExternalDAEs().end())
 					{
-						auto ext_ids = it->second.getIds();
-						auto id = ext_ids.find(uri.fragment());
-						if (id == ext_ids.end())
+						if (it->second)
 						{
-							cerr << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
+							auto ext_ids = it->second.getIds();
+							auto id = ext_ids.find(uri.fragment());
+							if (id == ext_ids.end())
+							{
+								cerr << dae.getURI() << ":" << line << ": Can't resolve " << uri << endl;
+								result |= 1;
+							}
+						}
+						else
+						{
+							cerr << dae.getURI() << ":" << line << ": " << uri << ": referenced file exists but has not been successfully loaded." << endl;
 							result |= 1;
 						}
-					}
-					else
-					{
-						cerr << dae.getURI() << ":" << line << ": " << uri << ": referenced file exists but has not been successfully loaded." << endl;
-						result |= 1;
 					}
 				}
 			}

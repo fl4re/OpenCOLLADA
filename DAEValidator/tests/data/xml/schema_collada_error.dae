@@ -18,7 +18,7 @@
 			<sampler id="sampler_0">
 				<input semantic="INPUT" source="#source_0"/>
 			</sampler>
-			<channel source="#sampler_0" target="node_1/translate.X"/>
+			<channel ource="#sampler_0" target="node_1/translate.X"/>
 		</animation>
 	</library_animations>
 	<library_cameras>

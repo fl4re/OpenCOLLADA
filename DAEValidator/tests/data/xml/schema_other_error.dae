@@ -142,7 +142,7 @@
 					<technique profile="PhysX_3.x" xmlns:px="http://www.collada.org/2016/08/COLLADAPhysX3Schema" xsi:schemaLocation="http://www.collada.org/2016/08/COLLADAPhysX3Schema http://www.collada.org/2016/08/COLLADAPhysX3Schema.xsd">
 						<px:px_rigid_body>
 							<px:global_pose>0 0 0.707107 0.707107 -8 6 2.27374e-13 </px:global_pose>
-							<px:sleep_threshold>5e-7</px:sleep_threshold>
+							<px:sleep_threshold>string</px:sleep_threshold>
 						</px:px_rigid_body>
 					</technique>
 				</extra>
