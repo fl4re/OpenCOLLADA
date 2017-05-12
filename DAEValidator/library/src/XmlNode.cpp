@@ -96,19 +96,17 @@ namespace opencollada
 		if (cache != xpathCache.end())
 			return cache->second;
 
-		if (xmlXPathContextPtr context = xmlXPathNewContext(mNode->doc))
-		{
-			xmlXPathRegisterNs(context, BAD_CAST "collada", BAD_CAST doc.getRootNamespace().c_str());
-			xmlXPathRegisterNs(context, BAD_CAST "xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
+		xmlXPathContextPtr context = xmlXPathNewContext(mNode->doc);
 
-			context->node = mNode;
+		xmlXPathRegisterNs(context, BAD_CAST "collada", BAD_CAST doc.getRootNamespace().c_str());
+		xmlXPathRegisterNs(context, BAD_CAST "xsi", BAD_CAST "http://www.w3.org/2001/XMLSchema-instance");
 
-			XmlNodeSet result(xmlXPathEvalExpression(BAD_CAST xpath.c_str(), context));
-			xmlXPathFreeContext(context);
-			auto p = xpathCache.insert(pair<XPathCacheKey, XmlNodeSet>(XPathCacheKey(mNode, xpath), move(result)));
-			return p.first->second;
-		}
-		return XmlNodeSet::null;
+		context->node = mNode;
+
+		XmlNodeSet result(xmlXPathEvalExpression(BAD_CAST xpath.c_str(), context));
+		xmlXPathFreeContext(context);
+		auto p = xpathCache.insert(pair<XPathCacheKey, XmlNodeSet>(XPathCacheKey(mNode, xpath), move(result)));
+		return p.first->second;
 	}
 
 	XmlNodes<XmlNodeIteratorByName> XmlNode::children(const string & name) const

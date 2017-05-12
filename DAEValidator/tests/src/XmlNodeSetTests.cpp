@@ -66,6 +66,11 @@ namespace opencollada_test
 		TEST_METHOD(IteratorOperatorMul)
 		{
 			IteratorCommon();
+
+			XmlNodeSet nodes;
+			XmlNodeSet::iterator it = nodes.begin();
+			XmlNode node = *it;
+			Assert::IsFalse(node);
 		}
 
 		TEST_METHOD(IteratorOperatorPreIncrement)
@@ -114,6 +119,12 @@ namespace opencollada_test
 				const XmlNodeSet & nodes = doc.root().selectNodes("//collada:node");
 				Assert::AreEqual(static_cast<size_t>(4), nodes.size());
 			}
+			{
+				XmlDoc doc;
+				doc.readFile(data_path("xml/xml_node_set.dae"));
+				const XmlNodeSet & init_froms = doc.root().selectNodes("//collada:image/collada:init_from");
+				Assert::AreEqual(static_cast<size_t>(0), init_froms.size());
+			}
 		}
 
 		TEST_METHOD(OperatorBracket)
@@ -124,6 +135,7 @@ namespace opencollada_test
 			Assert::AreEqual(static_cast<size_t>(2), nodes.size());
 			Assert::AreEqual("created", nodes[0].name().c_str());
 			Assert::AreEqual("modified", nodes[1].name().c_str());
+			Assert::IsFalse(nodes[INT_MAX]);
 		}
 	};
 }

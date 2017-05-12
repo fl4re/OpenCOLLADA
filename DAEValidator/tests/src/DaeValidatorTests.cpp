@@ -36,6 +36,32 @@ namespace opencollada_test
 				DaeValidator v(daes);
 				Assert::AreNotEqual(0, v.checkSchema());
 			}
+			{
+				list<string> daes{ Path::GetAbsolutePath(data_path("daevalidator/schema_ok.dae")) };
+				DaeValidator v(daes);
+				Assert::AreEqual(1, v.checkSchema(data_path("daevalidator/bad.xsd")));
+			}
+			{
+				list<string> daes{ Path::GetAbsolutePath(data_path("daevalidator/collada_1.5.dae")) };
+				DaeValidator v(daes);
+				Assert::AreEqual(1, v.checkSchema());
+			}
+			{
+				list<string> daes{ Path::GetAbsolutePath(data_path("daevalidator/collada_no_version.dae")) };
+				DaeValidator v(daes);
+				Assert::AreEqual(1, v.checkSchema());
+			}
+			{
+				list<string> daes{ Path::GetAbsolutePath(data_path("daevalidator/check_schema.dae")) };
+				DaeValidator v(daes);
+				Assert::AreEqual(0, v.checkSchema());
+			}
+			{
+				list<string> daes{ Path::GetAbsolutePath(data_path("daevalidator/check_missing_schema.dae")) };
+				DaeValidator v(daes);
+				Assert::AreEqual(1, v.checkSchema());
+				Assert::AreEqual(1, v.checkSchema());
+			}
 		}
 
 		TEST_METHOD(CheckUniqueIds)

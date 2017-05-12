@@ -193,7 +193,11 @@ namespace opencollada
 
 			// Don't try to load schemas that already failed in a previous run
 			if (schema.failedToLoad())
+			{
+				cout << "Error loading " << schemaUri << endl;
+				result |= 1;
 				continue;
+			}
 
 			string uri = schemaUri;
 
@@ -230,7 +234,7 @@ namespace opencollada
 			}
 			else if (!schema)
 			{
-				cerr << "Error loading " << schemaUri << endl;
+				cout << "Error loading " << schemaUri << endl;
 				result |= 1;
 			}
 		}

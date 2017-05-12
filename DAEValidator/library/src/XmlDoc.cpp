@@ -44,7 +44,9 @@ namespace opencollada
 		
 		struct stat st;
 		int r = stat(path.c_str(), &st);
-		auto size = r == 0 ? st.st_size : 0;
+		auto size = 0;
+		if (r == 0)
+			size = st.st_size;
 
 		if (size <= 4) return;
 

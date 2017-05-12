@@ -6,6 +6,25 @@
 using namespace opencollada;
 using namespace std;
 
+namespace Microsoft {
+	namespace VisualStudio {
+		namespace CppUnitTestFramework {
+			template <> wstring ToString<Dae::Version>(const Dae::Version & v)
+			{
+				wstringstream s;
+				switch (v)
+				{
+				case Dae::Version::COLLADA14: s << "COLLADA14"; break;
+				case Dae::Version::COLLADA15: s << "COLLADA15"; break;
+				case Dae::Version::Unknown:
+				default: s << "Unknown"; break;
+				}
+				return s.str();
+			}
+		}
+	}
+}
+
 namespace opencollada_test
 {
 	TEST_CLASS(DaeTest)
@@ -60,13 +79,13 @@ namespace opencollada_test
 		{
 			Dae dae;
 			dae.readFile(data_path("dae/unknown.dae"));
-			Assert::IsTrue(dae.getVersion() == Dae::Version::Unknown);
+			Assert::AreEqual(Dae::Version::Unknown, dae.getVersion());
 
 			dae.readFile(data_path("dae/ReadFileTest_1.4.dae"));
-			Assert::IsTrue(dae.getVersion() == Dae::Version::COLLADA14);
+			Assert::AreEqual(Dae::Version::COLLADA14, dae.getVersion());
 
 			dae.readFile(data_path("dae/ReadFileTest_1.5.dae"));
-			Assert::IsTrue(dae.getVersion() == Dae::Version::COLLADA15);
+			Assert::AreEqual(Dae::Version::COLLADA15, dae.getVersion());
 		}
 
 		TEST_METHOD(GetIds)

@@ -71,14 +71,28 @@ namespace opencollada_test
 
 		TEST_METHOD(ReadFile)
 		{
-			XmlDoc doc;
-			Assert::IsFalse(doc);
-			doc.readFile(data_path("xml/file.dae"));
-			Assert::IsTrue(doc);
-			doc.readFile(data_path("xml"));
-			Assert::IsFalse(doc);
-			doc.readFile(data_path("xml/bad_file.dae"));
-			Assert::IsFalse(doc);
+			{
+				XmlDoc doc;
+				Assert::IsFalse(doc);
+				doc.readFile(data_path("xml/file.dae"));
+				Assert::IsTrue(doc);
+				doc.readFile(data_path("xml"));
+				Assert::IsFalse(doc);
+				doc.readFile(data_path("xml/bad_file.dae"));
+				Assert::IsFalse(doc);
+			}
+			{
+				XmlDoc doc;
+				Assert::IsFalse(doc);
+				doc.readFile(data_path("xml/empty.dae"));
+				Assert::IsFalse(doc);
+			}
+			{
+				XmlDoc doc;
+				Assert::IsFalse(doc);
+				doc.readFile(data_path("xml/compressed_file.dae"));
+				Assert::IsTrue(doc);
+			}
 		}
 
 		TEST_METHOD(OperatorBool)

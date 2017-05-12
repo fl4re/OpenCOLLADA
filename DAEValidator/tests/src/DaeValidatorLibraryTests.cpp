@@ -48,6 +48,17 @@ namespace opencollada_test
 			Assert::AreEqual(0, result);
 		}
 
+		TEST_METHOD(MainDirNoDae)
+		{
+			string dae = data_path("daevalidatorlibrary/no_dae");
+			char* argv[] = {
+				"DAEValidator.exe",
+				const_cast<char*>(dae.c_str())
+			};
+			int result = main(sizeof(argv) / sizeof(argv[0]), argv);
+			Assert::AreEqual(0, result);
+		}
+
 		TEST_METHOD(MainQuiet)
 		{
 			string dae = data_path("daevalidatorlibrary/file.dae");

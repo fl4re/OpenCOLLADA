@@ -28,7 +28,7 @@ namespace opencollada
 		const Dae & operator = (Dae && other);
 
 		static const XmlSchema & GetColladaSchema141();
-		static const XmlSchema & GetColladaSchema15();
+		//static const XmlSchema & GetColladaSchema15();
 
 		static const std::string & GetColladaNamespace141();
 		static const std::string & GetColladaNamespace15();

@@ -33,8 +33,6 @@ namespace opencollada
 
 	XmlNode XmlNodeSet::iterator::operator*() const
 	{
-		if (!mNodeSet)
-			return XmlNode();
 		return XmlNode(xmlXPathNodeSetItem(mNodeSet, mIndex));
 	}
 
@@ -87,9 +85,6 @@ namespace opencollada
 
 	XmlNode XmlNodeSet::operator[](int index) const
 	{
-		if (index >= static_cast<int>(size()))
-			return XmlNode();
-
 		return XmlNode(xmlXPathNodeSetItem(mXPathObject->nodesetval, index));
 	}
 }

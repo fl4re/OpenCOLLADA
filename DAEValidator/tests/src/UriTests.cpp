@@ -414,6 +414,11 @@ namespace opencollada_test
 			rel.set("/path2");
 			uri.set(base, rel);
 			Assert::AreEqual("scheme:///path2", uri.str().c_str());
+
+			base.set("");
+			rel.set("./path");
+			uri.set(base, rel);
+			Assert::AreEqual("path", uri.str().c_str());
 		}
 
 		TEST_METHOD(OstreamOperatorRightShift)

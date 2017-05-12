@@ -44,14 +44,14 @@ namespace opencollada
 		return mColladaSchema141;
 	}
 
-	const XmlSchema & Dae::GetColladaSchema15()
-	{
-		if (!mColladaSchema15)
-			mColladaSchema15.readFile(Path::Join(Path::GetExecutableDirectory(), mColladaSchemaFileName15));
-		if (!mColladaSchema15)
-			mColladaSchema15.readFile(Path::Join(Path::GetWorkingDirectory(), mColladaSchemaFileName15));
-		return mColladaSchema15;
-	}
+	//const XmlSchema & Dae::GetColladaSchema15()
+	//{
+	//	if (!mColladaSchema15)
+	//		mColladaSchema15.readFile(Path::Join(Path::GetExecutableDirectory(), mColladaSchemaFileName15));
+	//	if (!mColladaSchema15)
+	//		mColladaSchema15.readFile(Path::Join(Path::GetWorkingDirectory(), mColladaSchemaFileName15));
+	//	return mColladaSchema15;
+	//}
 
 	const std::string & Dae::GetColladaNamespace141()
 	{
