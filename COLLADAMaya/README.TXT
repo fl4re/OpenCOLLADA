@@ -149,8 +149,8 @@ Export only materials to COLLADA document. (No geometry, no node, only materials
 	
 	. Export to separate files
 Allows to split animation/mesh into two differents DAE files:
-Use Polygon Meshes + Skin + Joints options (Animations option disabled) if you want to export only Mesh into one DAE.
-Use Animations + Joints options (Polygon Meshes and Skin options disabled) if you want to export only Animation into one DAE.
+Use Model option (equivalent to Polygon Meshes + Skin + Joints options) if you want to export only Mesh into one DAE.
+Use Anim option(equivalent to Animations + Joints options if you want to export only Animation into one DAE.
 If you want to export full animation and mesh into the same DAE, use Polygon Meshes + Skin + Joints + Animations options.
 	
 	. Export references
@@ -200,7 +200,13 @@ Extra attributes are exported in <extra>/<technique profile="OpenCOLLADAMaya"> s
 		. "double3" (Maya extra attribute type: Vector)
 	. attribute_value is the extra attribute value as text.
 
-
+- Extensions: 
+OpenCOLLADAMaya plugin supports LOD feature using Instance node extension
+https://www.khronos.org/collada/wiki/Instance_node_OpenCOLLADA_extension
+OpenCOLLADAMaya plugin supports AnimationClip Event using animationClip extension
+https://www.khronos.org/collada/wiki/Animation_clip_OpenCOLLADA_extension
+	
+	
 - Physics
 
 OpenCOLLADAMaya plugin currently supports export of PhysX scenes created with nVidia PhysX plugin. PhysX scene data is exported using several extensions described here:
