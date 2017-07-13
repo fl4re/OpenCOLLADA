@@ -154,10 +154,10 @@ Use Animations + Joints options (Polygon Meshes and Skin options disabled) if yo
 If you want to export full animation and mesh into the same DAE, use Polygon Meshes + Skin + Joints + Animations options.
 	
 	. Export references
-Export Maya references (as COLLADA instances).
+Export Maya references (as COLLADA external references).
 	
 	. Dereference
-When exporting references: embed references into COLLADA documents (no COLLADA instances).
+When exporting references: embed references into COLLADA documents (no COLLADA external references).
 	
 	. Export camera as lookat
 Export camera node transform as COLLADA <lookat>.
